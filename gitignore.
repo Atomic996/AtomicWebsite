@@ -1,0 +1,14 @@
+# الملفات المهملة
+.DS_Store
+node_modules/
+*.log
+*.tmp
+*.swp
+
+# ملفات البيئة
+.env
+.env.local
+
+# أصول التطوير
+dist/
+build/
