@@ -1,0 +1,43 @@
+document.addEventListener('DOMContentLoaded', () => {
+    const slider = document.querySelector('.image-slider');
+    const sliderItems = document.querySelectorAll('.slider-item');
+
+    // Duplicate slider items to create an infinite loop effect
+    // This is optional but improves the seamless loop.
+    // However, for a simple left-to-right scroll with GSAP, it's less critical.
+    // const clonedItems = [];
+    // sliderItems.forEach(item => {
+    //     const clone = item.cloneNode(true);
+    //     clonedItems.push(clone);
+    // });
+    // clonedItems.forEach(clone => slider.appendChild(clone));
+
+    // Calculate total width of all slider items
+    let totalWidth = 0;
+    sliderItems.forEach(item => {
+        totalWidth += item.offsetWidth + (parseInt(getComputedStyle(item).marginLeft) || 0) + (parseInt(getComputedStyle(item).marginRight) || 0);
+    });
+
+    // If you duplicated items, ensure totalWidth includes them.
+    // For simplicity with basic scroll, we'll just scroll the existing items.
+
+    // GSAP animation for continuous horizontal scroll
+    gsap.to(slider, {
+        x: -totalWidth, // Scroll to the left by the total width of items
+        ease: "none", // Linear movement
+        duration: 20, // Adjust duration for scroll speed
+        repeat: -1, // Loop infinitely
+        modifiers: {
+            x: gsap.utils.unitize(x => parseFloat(x) % totalWidth) // Ensures seamless looping
+        }
+    });
+
+    // Optional: Pause animation on hover
+    slider.addEventListener('mouseenter', () => {
+        gsap.to(gsap.globalTimeline, { timeScale: 0.2 }); // Slow down animation
+    });
+
+    slider.addEventListener('mouseleave', () => {
+        gsap.to(gsap.globalTimeline, { timeScale: 1 }); // Resume normal speed
+    });
+});
