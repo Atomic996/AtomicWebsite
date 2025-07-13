@@ -8,23 +8,23 @@
     --atomic-dark-purple: #2a003a; /* بنفسجي داكن للخلفيات المتدرجة */
 }
 
-/* استيراد خطوط جوجل (اختياري، يمكنك تغيير الخطوط) */
+/* استيراد خطوط جوجل */
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Orbitron:wght@400;700&display=swap');
 
 /* أساسيات الجسم والخطوط */
 body {
-    font-family: 'Cairo', sans-serif; /* خط عربي حديث وواضح */
+    font-family: 'Cairo', sans-serif;
     background: linear-gradient(135deg, var(--atomic-dark-purple) 0%, var(--atomic-black) 50%, var(--atomic-dark-blue) 100%);
     color: var(--atomic-silver);
     margin: 0;
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* توزيع المحتوى بالتساوي */
+    justify-content: space-between;
     align-items: center;
     min-height: 100vh;
     overflow-x: hidden;
-    position: relative; /* للسماح بتأثير النجوم */
-    z-index: 1; /* للتأكد من أن النجوم في الخلفية */
+    position: relative;
+    z-index: 1;
 }
 
 /* تأثير النجوم أو الجزيئات في الخلفية */
@@ -38,8 +38,8 @@ body::before {
     background-image: radial-gradient(#ffffff22 1px, transparent 1px), radial-gradient(#ffffff22 1px, transparent 1px);
     background-size: 50px 50px;
     background-position: 0 0, 25px 25px;
-    opacity: 0.1; /* شفافية خفيفة */
-    z-index: -1; /* للتأكد من أنها خلف المحتوى */
+    opacity: 0.1;
+    z-index: -1;
 }
 
 /* العنوان الرئيسي */
@@ -53,10 +53,10 @@ body::before {
 }
 
 .main-header h1 {
-    font-family: 'Orbitron', sans-serif; /* خط ذو طابع تقني مستقبلي */
-    font-size: 5em; /* حجم أكبر */
+    font-family: 'Orbitron', sans-serif;
+    font-size: 5em;
     color: var(--atomic-gold);
-    text-shadow: 0 0 20px rgba(255, 215, 0, 0.8), 0 0 30px rgba(255, 215, 0, 0.5); /* توهج أقوى */
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.8), 0 0 30px rgba(255, 215, 0, 0.5);
     letter-spacing: 8px;
     margin: 0;
     line-height: 1;
@@ -75,16 +75,16 @@ body::before {
     max-width: 1200px;
     display: flex;
     flex-direction: column;
-    gap: 50px; /* مسافة بين الأقسام */
+    gap: 50px;
     padding: 20px 0;
 }
 
 /* الأقسام العامة */
 section {
-    background-color: rgba(0, 0, 0, 0.6); /* خلفية شبه شفافة للأقسام */
+    background-color: rgba(0, 0, 0, 0.6);
     border-radius: 20px;
     padding: 40px;
-    box-shadow: 0 0 40px rgba(0, 191, 255, 0.2); /* توهج أزرق خفيف */
+    box-shadow: 0 0 40px rgba(0, 191, 255, 0.2);
     border: 1px solid rgba(0, 191, 255, 0.1);
     text-align: center;
 }
@@ -97,21 +97,27 @@ section h2 {
     text-shadow: 0 0 10px rgba(0, 191, 255, 0.5);
 }
 
-/* حاوية السلايدر */
-.slider-container {
-    overflow: hidden;
+/* حاوية السلايدر الخارجية لتطبيق المنظور */
+.slider-outer-container {
+    overflow: hidden; /* لا يخفي Overflow هنا بل في الحاوية الداخلية */
     position: relative;
     padding: 20px 0;
-    /* إزالة الخلفية والحد هنا لأنها في الـ section الآن */
-    /* box-shadow: none; */
+    perspective: 1200px; /* منظور 3D */
+    perspective-origin: center center;
+    display: flex; /* لتمكين التوسيط */
+    justify-content: center; /* توسيط السلايدر نفسه */
+    align-items: center;
+    height: 300px; /* ارتفاع ثابت للسلايدر */
 }
 
 /* شريط الصور المتحرك */
 .image-slider {
     display: flex;
-    width: fit-content;
-    perspective: 1000px; /* لتمكين تأثير 3D */
-    align-items: center; /* توسيط عمودي للعناصر */
+    position: absolute; /* للسماح بالتحريك الحر */
+    left: 50%; /* توسيط مبدئي */
+    transform: translateX(-50%); /* توسيط مبدئي */
+    align-items: center;
+    height: 100%;
 }
 
 /* عناصر السلايدر (الأيقونات) */
@@ -121,48 +127,61 @@ section h2 {
     align-items: center;
     text-decoration: none;
     color: var(--atomic-silver);
-    min-width: 200px; /* عرض أدنى أكبر لكل عنصر */
-    margin: 0 20px; /* تباعد أكبر بين العناصر */
-    transition: all 0.4s ease; /* انتقال سلس لكل الخصائص */
-    padding: 20px;
+    width: 180px; /* عرض ثابت للبطاقة */
+    height: 250px; /* ارتفاع ثابت للبطاقة */
+    margin: 0 15px; /* تباعد بين العناصر */
+    transition: all 0.2s ease-out; /* انتقال أسرع لتأثير السحب */
+    padding: 15px;
     border-radius: 15px;
-    background: linear-gradient(145deg, rgba(0, 191, 255, 0.08), rgba(0, 191, 255, 0.02)); /* تدرج خفيف للعنصر */
+    background: linear-gradient(145deg, rgba(0, 191, 255, 0.08), rgba(0, 191, 255, 0.02));
     border: 1px solid rgba(0, 191, 255, 0.2);
     box-shadow: 0 5px 25px rgba(0, 191, 255, 0.1);
-    transform-style: preserve-3d; /* للسماح بتدوير 3D */
+    transform-style: preserve-3d; /* لتمكين تحويلات 3D على العنصر نفسه */
+    /* إضافة تحويلات مبدئية سيتم تجاوزها بواسطة JS */
+    transform: rotateY(0deg) scale(0.8);
+    opacity: 0.5;
+    cursor: grab; /* مؤشر سحب */
 }
 
 .slider-item img {
-    width: 120px; /* حجم أيقونة أكبر */
-    height: 120px;
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
     object-fit: cover;
-    border: 4px solid var(--atomic-electric-blue); /* إطار أزرق سميك */
-    box-shadow: 0 0 20px rgba(0, 191, 255, 0.7); /* توهج أقوى حول الصورة */
-    transition: transform 0.4s ease;
-    background-color: #000; /* خلفية سوداء للأيقونة داخل الإطار */
+    border: 4px solid var(--atomic-electric-blue);
+    box-shadow: 0 0 20px rgba(0, 191, 255, 0.7);
+    transition: transform 0.2s ease;
+    background-color: #000;
 }
 
 .slider-item p {
     margin-top: 15px;
-    font-size: 1.3em; /* حجم أكبر للنص */
+    font-size: 1.1em;
     font-weight: bold;
     color: var(--atomic-electric-blue);
     text-shadow: 0 0 8px rgba(0, 191, 255, 0.6);
 }
 
-/* تأثير التحويم (Hover Effect) */
+/* حالة العنصر النشط (في المنتصف) - سيتم التحكم بها بواسطة JS */
+.slider-item.active {
+    transform: scale(1.1) rotateY(0deg); /* تكبير وعدم تدوير */
+    opacity: 1; /* وضوح كامل */
+    border-color: rgba(0, 191, 255, 0.6);
+    box-shadow: 0 0 60px rgba(0, 191, 255, 0.9), 0 0 90px rgba(0, 191, 255, 0.6);
+}
+
+/* تأثير التحويم (Hover Effect) - سيبقى موجودًا ولكنه سيعمل بالتزامن مع GSAP Draggable */
 .slider-item:hover {
-    transform: translateY(-15px) scale(1.1) rotateY(5deg); /* رفع، تكبير، وتدوير 3D */
-    box-shadow: 0 0 50px rgba(0, 191, 255, 0.9), 0 0 80px rgba(0, 191, 255, 0.5); /* توهج أكبر بكثير */
+    transform: scale(1.1) rotateY(0deg); /* تكبير فقط (Draggable سيتحكم بالباقي) */
+    box-shadow: 0 0 50px rgba(0, 191, 255, 0.9), 0 0 80px rgba(0, 191, 255, 0.5);
     background: linear-gradient(145deg, rgba(0, 191, 255, 0.2), rgba(0, 191, 255, 0.05));
     border-color: rgba(0, 191, 255, 0.4);
 }
-
 .slider-item:hover img {
-    transform: scale(1.15); /* تكبير الصورة داخل العنصر */
+    transform: scale(1.15);
     box-shadow: 0 0 35px rgba(0, 191, 255, 1.2), 0 0 60px rgba(0, 191, 255, 0.8);
 }
+
 
 /* قسم "من أنا" */
 .about-section p {
@@ -188,90 +207,35 @@ section h2 {
 
 /* استجابة التصميم للشاشات الصغيرة */
 @media (max-width: 1024px) {
-    .main-header h1 {
-        font-size: 4em;
-        letter-spacing: 6px;
-    }
-    .main-header .tagline {
-        font-size: 1.2em;
-    }
-    section h2 {
-        font-size: 2em;
-    }
-    .slider-item {
-        min-width: 180px;
-        margin: 0 15px;
-    }
-    .slider-item img {
-        width: 100px;
-        height: 100px;
-    }
-    .slider-item p {
-        font-size: 1.2em;
-    }
-    .about-section p {
-        font-size: 1.1em;
-    }
+    .main-header h1 { font-size: 4em; letter-spacing: 6px; }
+    .main-header .tagline { font-size: 1.2em; }
+    section h2 { font-size: 2em; }
+    .slider-item { width: 150px; height: 220px; margin: 0 12px; padding: 12px; }
+    .slider-item img { width: 90px; height: 90px; }
+    .slider-item p { font-size: 1.1em; }
+    .about-section p { font-size: 1.1em; }
+    .slider-outer-container { height: 260px; }
 }
 
 @media (max-width: 768px) {
-    .main-header h1 {
-        font-size: 3em;
-        letter-spacing: 4px;
-    }
-    .main-header .tagline {
-        font-size: 1em;
-    }
-    section {
-        padding: 25px;
-    }
-    section h2 {
-        font-size: 1.8em;
-    }
-    .slider-item {
-        min-width: 150px;
-        margin: 0 10px;
-        padding: 15px;
-    }
-    .slider-item img {
-        width: 80px;
-        height: 80px;
-        border-width: 3px;
-    }
-    .slider-item p {
-        font-size: 1.1em;
-    }
-    .about-section p {
-        font-size: 1em;
-    }
+    .main-header h1 { font-size: 3em; letter-spacing: 4px; }
+    .main-header .tagline { font-size: 1em; }
+    section { padding: 25px; }
+    section h2 { font-size: 1.8em; }
+    .slider-item { width: 120px; height: 180px; margin: 0 10px; padding: 10px; }
+    .slider-item img { width: 70px; height: 70px; border-width: 3px; }
+    .slider-item p { font-size: 1em; }
+    .about-section p { font-size: 1em; }
+    .slider-outer-container { height: 220px; }
 }
 
 @media (max-width: 480px) {
-    .main-header h1 {
-        font-size: 2.2em;
-        letter-spacing: 3px;
+    .main-header h1 { font-size: 2.2em; letter-spacing: 3px; }
+    .main-header .tagline { font-size: 0.9em; }
+    section { padding: 15px; }
+    section h2 { font-size: 1.5em; margin-bottom: 15px; }
+    .slider-item { width: 100px; height: 160px; margin: 0 8px; padding: 8px; }
+    .slider-item img { width: 50px; height: 50px; border-width: 2px; }
+    .slider-item p { font-size: 0.9em; }
+    .slider-outer-container { height: 180px; }
     }
-    .main-header .tagline {
-        font-size: 0.9em;
-    }
-    section {
-        padding: 15px;
-    }
-    section h2 {
-        font-size: 1.5em;
-        margin-bottom: 15px;
-    }
-    .slider-item {
-        min-width: 120px;
-        margin: 0 8px;
-        padding: 10px;
-    }
-    .slider-item img {
-        width: 60px;
-        height: 60px;
-        border-width: 2px;
-    }
-    .slider-item p {
-        font-size: 0.9em;
-    }
-        }
