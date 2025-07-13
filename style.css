@@ -1,21 +1,18 @@
-/* الألوان المستوحاة من Atomic */
+/* الألوان المستوحاة من الصورة الأخيرة (أزرق داكن، بنفسجي، أزرق فاتح/سيان) */
 :root {
-    --atomic-black: #1a1a2e; /* خلفية داكنة مع لمسة بنفسجية */
-    --atomic-electric-blue: #00BFFF; /* أزرق مشع للعناصر التفاعلية */
-    --atomic-silver: #E0E0E0; /* رمادي فاتح للنصوص الثانوية */
-    --atomic-gold: #FFD700; /* ذهبي للعناوين والتمييز */
-    --atomic-dark-blue: #000033; /* أزرق داكن للخلفيات المتدرجة */
-    --atomic-dark-purple: #2a003a; /* بنفسجي داكن للخلفيات المتدرجة */
+    --bg-dark: #0A0F2B; /* خلفية أزرق داكن جداً */
+    --accent-blue: #00A6ED; /* أزرق فاتح / سيان للعناصر المميزة */
+    --accent-purple: #8A2BE2; /* بنفسجي لللمسات الثانوية */
+    --text-light: #E0E0E0; /* نص فاتح */
+    --text-muted: #A0A0A0; /* نص ثانوي */
+    --shadow-color: rgba(0, 166, 237, 0.4); /* ظل للأزرق المميز */
 }
-
-/* استيراد خطوط جوجل */
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Orbitron:wght@400;700&display=swap');
 
 /* أساسيات الجسم والخطوط */
 body {
-    font-family: 'Cairo', sans-serif;
-    background: linear-gradient(135deg, var(--atomic-dark-purple) 0%, var(--atomic-black) 50%, var(--atomic-dark-blue) 100%);
-    color: var(--atomic-silver);
+    font-family: 'Cairo', sans-serif; /* خط عربي حديث وواضح */
+    background: linear-gradient(135deg, var(--bg-dark) 0%, #1a0a38 50%, #000020 100%); /* تدرج ألوان داكنة */
+    color: var(--text-light);
     margin: 0;
     display: flex;
     flex-direction: column;
@@ -53,10 +50,10 @@ body::before {
 }
 
 .main-header h1 {
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Orbitron', sans-serif; /* خط ذو طابع تقني مستقبلي */
     font-size: 5em;
-    color: var(--atomic-gold);
-    text-shadow: 0 0 20px rgba(255, 215, 0, 0.8), 0 0 30px rgba(255, 215, 0, 0.5);
+    color: var(--accent-blue); /* لون أزرق مميز */
+    text-shadow: 0 0 20px var(--accent-blue), 0 0 30px var(--accent-purple); /* توهج أزرق/بنفسجي */
     letter-spacing: 8px;
     margin: 0;
     line-height: 1;
@@ -64,7 +61,7 @@ body::before {
 
 .main-header .tagline {
     font-size: 1.5em;
-    color: var(--atomic-silver);
+    color: var(--text-muted);
     margin-top: 10px;
     opacity: 0.8;
 }
@@ -84,104 +81,95 @@ section {
     background-color: rgba(0, 0, 0, 0.6);
     border-radius: 20px;
     padding: 40px;
-    box-shadow: 0 0 40px rgba(0, 191, 255, 0.2);
-    border: 1px solid rgba(0, 191, 255, 0.1);
+    box-shadow: 0 0 40px var(--shadow-color); /* توهج أزرق خفيف */
+    border: 1px solid rgba(0, 166, 237, 0.2);
     text-align: center;
 }
 
 section h2 {
     font-family: 'Orbitron', sans-serif;
     font-size: 2.5em;
-    color: var(--atomic-electric-blue);
+    color: var(--accent-blue);
     margin-bottom: 25px;
-    text-shadow: 0 0 10px rgba(0, 191, 255, 0.5);
+    text-shadow: 0 0 10px var(--shadow-color);
 }
 
-/* حاوية السلايدر الخارجية لتطبيق المنظور */
-.slider-outer-container {
-    overflow: hidden; /* لا يخفي Overflow هنا بل في الحاوية الداخلية */
+/* حاوية المنظور الرئيسية */
+.perspective-container {
+    width: 100%;
+    height: 350px; /* ارتفاع ثابت للمنطقة التي تظهر فيها الصور */
+    perspective: 1000px; /* تعريف منظور 3D */
+    overflow: hidden;
     position: relative;
-    padding: 20px 0;
-    perspective: 1200px; /* منظور 3D */
-    perspective-origin: center center;
-    display: flex; /* لتمكين التوسيط */
-    justify-content: center; /* توسيط السلايدر نفسه */
-    align-items: center;
-    height: 300px; /* ارتفاع ثابت للسلايدر */
-}
-
-/* شريط الصور المتحرك */
-.image-slider {
     display: flex;
-    position: absolute; /* للسماح بالتحريك الحر */
-    left: 50%; /* توسيط مبدئي */
-    transform: translateX(-50%); /* توسيط مبدئي */
+    justify-content: center;
     align-items: center;
-    height: 100%;
+    margin: auto;
+    cursor: grab; /* مؤشر سحب */
 }
 
-/* عناصر السلايدر (الأيقونات) */
+/* شريط الصور المتحرك (الحاوية التي تحمل الصور) */
+.image-slider {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform-style: preserve-3d; /* مهم لتمكين تحولات 3D على العناصر الأطفال */
+    transition: transform 0.1s ease-out; /* حركة سلسة عند التفاعل */
+}
+
+/* عناصر السلايدر (الأيقونات الفردية) */
 .slider-item {
+    position: absolute; /* لوضعها بحرية في الفضاء 3D */
     display: flex;
     flex-direction: column;
     align-items: center;
     text-decoration: none;
-    color: var(--atomic-silver);
-    width: 180px; /* عرض ثابت للبطاقة */
-    height: 250px; /* ارتفاع ثابت للبطاقة */
-    margin: 0 15px; /* تباعد بين العناصر */
-    transition: all 0.2s ease-out; /* انتقال أسرع لتأثير السحب */
+    color: var(--text-light);
+    width: 200px; /* عرض الأيقونة */
+    height: 280px; /* ارتفاع الأيقونة */
     padding: 15px;
     border-radius: 15px;
-    background: linear-gradient(145deg, rgba(0, 191, 255, 0.08), rgba(0, 191, 255, 0.02));
-    border: 1px solid rgba(0, 191, 255, 0.2);
-    box-shadow: 0 5px 25px rgba(0, 191, 255, 0.1);
-    transform-style: preserve-3d; /* لتمكين تحويلات 3D على العنصر نفسه */
-    /* إضافة تحويلات مبدئية سيتم تجاوزها بواسطة JS */
-    transform: rotateY(0deg) scale(0.8);
-    opacity: 0.5;
-    cursor: grab; /* مؤشر سحب */
+    background: linear-gradient(145deg, rgba(0, 166, 237, 0.08), rgba(0, 166, 237, 0.02)); /* تدرج خفيف للأزرق */
+    border: 1px solid rgba(0, 166, 237, 0.2);
+    box-shadow: 0 5px 25px rgba(0, 166, 237, 0.1);
+    transition: all 0.3s ease-out; /* انتقال سلس للتحويم */
+    backface-visibility: hidden; /* يمنع وميض العناصر الخلفية */
 }
 
 .slider-item img {
-    width: 100px;
-    height: 100px;
+    width: 120px;
+    height: 120px;
     border-radius: 50%;
     object-fit: cover;
-    border: 4px solid var(--atomic-electric-blue);
-    box-shadow: 0 0 20px rgba(0, 191, 255, 0.7);
-    transition: transform 0.2s ease;
+    border: 4px solid var(--accent-blue); /* إطار أزرق مميز */
+    box-shadow: 0 0 20px rgba(0, 166, 237, 0.7); /* توهج أزرق حول الصورة */
+    transition: transform 0.3s ease;
     background-color: #000;
 }
 
 .slider-item p {
     margin-top: 15px;
-    font-size: 1.1em;
+    font-size: 1.3em;
     font-weight: bold;
-    color: var(--atomic-electric-blue);
-    text-shadow: 0 0 8px rgba(0, 191, 255, 0.6);
+    color: var(--accent-blue);
+    text-shadow: 0 0 8px var(--shadow-color);
 }
 
-/* حالة العنصر النشط (في المنتصف) - سيتم التحكم بها بواسطة JS */
-.slider-item.active {
-    transform: scale(1.1) rotateY(0deg); /* تكبير وعدم تدوير */
-    opacity: 1; /* وضوح كامل */
-    border-color: rgba(0, 191, 255, 0.6);
-    box-shadow: 0 0 60px rgba(0, 191, 255, 0.9), 0 0 90px rgba(0, 191, 255, 0.6);
-}
-
-/* تأثير التحويم (Hover Effect) - سيبقى موجودًا ولكنه سيعمل بالتزامن مع GSAP Draggable */
+/* تأثير التحويم (Hover Effect) */
 .slider-item:hover {
-    transform: scale(1.1) rotateY(0deg); /* تكبير فقط (Draggable سيتحكم بالباقي) */
-    box-shadow: 0 0 50px rgba(0, 191, 255, 0.9), 0 0 80px rgba(0, 191, 255, 0.5);
-    background: linear-gradient(145deg, rgba(0, 191, 255, 0.2), rgba(0, 191, 255, 0.05));
-    border-color: rgba(0, 191, 255, 0.4);
+    transform: translateY(-10px) scale(1.05) !important; /* مهم استخدام !important لتجاوز تحويلات JS مؤقتاً */
+    box-shadow: 0 0 50px var(--shadow-color), 0 0 80px rgba(0, 166, 237, 0.5); /* توهج أكبر بكثير */
+    background: linear-gradient(145deg, rgba(0, 166, 237, 0.2), rgba(0, 166, 237, 0.05));
+    border-color: rgba(0, 166, 237, 0.4);
+    z-index: 100 !important; /* التأكد من ظهوره فوق البقية */
 }
 .slider-item:hover img {
     transform: scale(1.15);
-    box-shadow: 0 0 35px rgba(0, 191, 255, 1.2), 0 0 60px rgba(0, 191, 255, 0.8);
+    box-shadow: 0 0 35px rgba(0, 166, 237, 1.2), 0 0 60px rgba(0, 166, 237, 0.8);
 }
-
 
 /* قسم "من أنا" */
 .about-section p {
@@ -189,7 +177,7 @@ section h2 {
     line-height: 1.8;
     max-width: 800px;
     margin: 20px auto;
-    color: var(--atomic-silver);
+    color: var(--text-light);
 }
 
 /* تذييل الصفحة */
@@ -200,7 +188,7 @@ section h2 {
     background: rgba(0, 0, 0, 0.4);
     width: 100%;
     box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.5);
-    color: var(--atomic-silver);
+    color: var(--text-muted);
     font-size: 0.9em;
     opacity: 0.7;
 }
@@ -210,11 +198,11 @@ section h2 {
     .main-header h1 { font-size: 4em; letter-spacing: 6px; }
     .main-header .tagline { font-size: 1.2em; }
     section h2 { font-size: 2em; }
-    .slider-item { width: 150px; height: 220px; margin: 0 12px; padding: 12px; }
-    .slider-item img { width: 90px; height: 90px; }
-    .slider-item p { font-size: 1.1em; }
+    .slider-item { width: 180px; height: 250px; }
+    .slider-item img { width: 100px; height: 100px; }
+    .slider-item p { font-size: 1.2em; }
     .about-section p { font-size: 1.1em; }
-    .slider-outer-container { height: 260px; }
+    .perspective-container { height: 320px; }
 }
 
 @media (max-width: 768px) {
@@ -222,11 +210,11 @@ section h2 {
     .main-header .tagline { font-size: 1em; }
     section { padding: 25px; }
     section h2 { font-size: 1.8em; }
-    .slider-item { width: 120px; height: 180px; margin: 0 10px; padding: 10px; }
-    .slider-item img { width: 70px; height: 70px; border-width: 3px; }
+    .slider-item { width: 150px; height: 220px; padding: 10px; }
+    .slider-item img { width: 80px; height: 80px; border-width: 3px; }
     .slider-item p { font-size: 1em; }
     .about-section p { font-size: 1em; }
-    .slider-outer-container { height: 220px; }
+    .perspective-container { height: 280px; }
 }
 
 @media (max-width: 480px) {
@@ -234,8 +222,8 @@ section h2 {
     .main-header .tagline { font-size: 0.9em; }
     section { padding: 15px; }
     section h2 { font-size: 1.5em; margin-bottom: 15px; }
-    .slider-item { width: 100px; height: 160px; margin: 0 8px; padding: 8px; }
-    .slider-item img { width: 50px; height: 50px; border-width: 2px; }
+    .slider-item { width: 120px; height: 180px; padding: 8px; }
+    .slider-item img { width: 60px; height: 60px; border-width: 2px; }
     .slider-item p { font-size: 0.9em; }
-    .slider-outer-container { height: 180px; }
+    .perspective-container { height: 220px; }
     }
