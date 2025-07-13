@@ -8,10 +8,13 @@
     --shadow-color: rgba(0, 166, 237, 0.4); /* ظل للأزرق المميز */
 }
 
+/* استيراد خطوط جوجل */
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Orbitron:wght@400;700&display=swap');
+
 /* أساسيات الجسم والخطوط */
 body {
-    font-family: 'Cairo', sans-serif; /* خط عربي حديث وواضح */
-    background: linear-gradient(135deg, var(--bg-dark) 0%, #1a0a38 50%, #000020 100%); /* تدرج ألوان داكنة */
+    font-family: 'Cairo', sans-serif;
+    background: linear-gradient(135deg, var(--bg-dark) 0%, #1a0a38 50%, #000020 100%);
     color: var(--text-light);
     margin: 0;
     display: flex;
@@ -50,10 +53,10 @@ body::before {
 }
 
 .main-header h1 {
-    font-family: 'Orbitron', sans-serif; /* خط ذو طابع تقني مستقبلي */
+    font-family: 'Orbitron', sans-serif;
     font-size: 5em;
-    color: var(--accent-blue); /* لون أزرق مميز */
-    text-shadow: 0 0 20px var(--accent-blue), 0 0 30px var(--accent-purple); /* توهج أزرق/بنفسجي */
+    color: var(--accent-blue);
+    text-shadow: 0 0 20px var(--accent-blue), 0 0 30px var(--accent-purple);
     letter-spacing: 8px;
     margin: 0;
     line-height: 1;
@@ -81,7 +84,7 @@ section {
     background-color: rgba(0, 0, 0, 0.6);
     border-radius: 20px;
     padding: 40px;
-    box-shadow: 0 0 40px var(--shadow-color); /* توهج أزرق خفيف */
+    box-shadow: 0 0 40px var(--shadow-color);
     border: 1px solid rgba(0, 166, 237, 0.2);
     text-align: center;
 }
@@ -94,81 +97,82 @@ section h2 {
     text-shadow: 0 0 10px var(--shadow-color);
 }
 
-/* حاوية المنظور الرئيسية */
-.perspective-container {
+/* --- Carousel 3D Styles --- */
+
+/* الحاوية الرئيسية للكاروسيل، تحدد منظور المشهد 3D */
+.carousel-container {
     width: 100%;
-    height: 350px; /* ارتفاع ثابت للمنطقة التي تظهر فيها الصور */
-    perspective: 1000px; /* تعريف منظور 3D */
-    overflow: hidden;
+    height: 380px; /* ارتفاع ثابت لعرض الكاروسيل */
+    perspective: 1200px; /* مهم جداً لتأثير 3D - قيمة أكبر = منظور أعمق */
     position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: auto;
+    overflow: hidden; /* إخفاء الأجزاء الخارجة عن المنظور */
     cursor: grab; /* مؤشر سحب */
 }
 
-/* شريط الصور المتحرك (الحاوية التي تحمل الصور) */
-.image-slider {
+/* الحاوية الداخلية التي تحتوي على العناصر وتدور حول محور Y */
+.carousel-wrapper {
     position: absolute;
     width: 100%;
     height: 100%;
+    transform-style: preserve-3d; /* يسمح للعناصر الداخلية بالحفاظ على تحولاتها 3D */
     display: flex;
     justify-content: center;
     align-items: center;
-    transform-style: preserve-3d; /* مهم لتمكين تحولات 3D على العناصر الأطفال */
     transition: transform 0.1s ease-out; /* حركة سلسة عند التفاعل */
 }
 
-/* عناصر السلايدر (الأيقونات الفردية) */
-.slider-item {
+/* عنصر الكاروسيل الفردي (البطاقة) */
+.carousel-item {
     position: absolute; /* لوضعها بحرية في الفضاء 3D */
     display: flex;
     flex-direction: column;
     align-items: center;
     text-decoration: none;
     color: var(--text-light);
-    width: 200px; /* عرض الأيقونة */
-    height: 280px; /* ارتفاع الأيقونة */
-    padding: 15px;
+    width: 220px; /* عرض البطاقة */
+    height: 300px; /* ارتفاع البطاقة */
+    padding: 20px;
     border-radius: 15px;
-    background: linear-gradient(145deg, rgba(0, 166, 237, 0.08), rgba(0, 166, 237, 0.02)); /* تدرج خفيف للأزرق */
-    border: 1px solid rgba(0, 166, 237, 0.2);
-    box-shadow: 0 5px 25px rgba(0, 166, 237, 0.1);
+    background: linear-gradient(145deg, rgba(0, 166, 237, 0.15), rgba(0, 166, 237, 0.05)); /* تدرج خفيف للأزرق */
+    border: 1px solid rgba(0, 166, 237, 0.3);
+    box-shadow: 0 5px 30px rgba(0, 166, 237, 0.2);
     transition: all 0.3s ease-out; /* انتقال سلس للتحويم */
     backface-visibility: hidden; /* يمنع وميض العناصر الخلفية */
 }
 
-.slider-item img {
-    width: 120px;
-    height: 120px;
+.carousel-item img {
+    width: 140px; /* حجم أكبر للأيقونة */
+    height: 140px;
     border-radius: 50%;
     object-fit: cover;
-    border: 4px solid var(--accent-blue); /* إطار أزرق مميز */
-    box-shadow: 0 0 20px rgba(0, 166, 237, 0.7); /* توهج أزرق حول الصورة */
+    border: 5px solid var(--accent-blue); /* إطار أزرق سميك */
+    box-shadow: 0 0 25px rgba(0, 166, 237, 0.8); /* توهج أزرق حول الصورة */
     transition: transform 0.3s ease;
     background-color: #000;
 }
 
-.slider-item p {
-    margin-top: 15px;
-    font-size: 1.3em;
+.carousel-item p {
+    margin-top: 20px;
+    font-size: 1.4em;
     font-weight: bold;
     color: var(--accent-blue);
-    text-shadow: 0 0 8px var(--shadow-color);
+    text-shadow: 0 0 10px var(--shadow-color);
 }
 
-/* تأثير التحويم (Hover Effect) */
-.slider-item:hover {
-    transform: translateY(-10px) scale(1.05) !important; /* مهم استخدام !important لتجاوز تحويلات JS مؤقتاً */
-    box-shadow: 0 0 50px var(--shadow-color), 0 0 80px rgba(0, 166, 237, 0.5); /* توهج أكبر بكثير */
-    background: linear-gradient(145deg, rgba(0, 166, 237, 0.2), rgba(0, 166, 237, 0.05));
-    border-color: rgba(0, 166, 237, 0.4);
+/* تأثير التحويم (Hover Effect) على عناصر الكاروسيل */
+.carousel-item:hover {
+    transform: translateY(-15px) scale(1.1) !important; /* رفع وتكبير العنصر عند التحويم */
+    box-shadow: 0 0 60px var(--shadow-color), 0 0 90px rgba(0, 166, 237, 0.6);
+    background: linear-gradient(145deg, rgba(0, 166, 237, 0.3), rgba(0, 166, 237, 0.1));
+    border-color: rgba(0, 166, 237, 0.5);
     z-index: 100 !important; /* التأكد من ظهوره فوق البقية */
 }
-.slider-item:hover img {
-    transform: scale(1.15);
-    box-shadow: 0 0 35px rgba(0, 166, 237, 1.2), 0 0 60px rgba(0, 166, 237, 0.8);
+.carousel-item:hover img {
+    transform: scale(1.1); /* تكبير الصورة داخل البطاقة */
+    box-shadow: 0 0 40px rgba(0, 166, 237, 1.5), 0 0 70px rgba(0, 166, 237, 0.9);
 }
 
 /* قسم "من أنا" */
@@ -198,11 +202,11 @@ section h2 {
     .main-header h1 { font-size: 4em; letter-spacing: 6px; }
     .main-header .tagline { font-size: 1.2em; }
     section h2 { font-size: 2em; }
-    .slider-item { width: 180px; height: 250px; }
-    .slider-item img { width: 100px; height: 100px; }
-    .slider-item p { font-size: 1.2em; }
+    .carousel-item { width: 180px; height: 260px; padding: 15px; }
+    .carousel-item img { width: 120px; height: 120px; }
+    .carousel-item p { font-size: 1.2em; }
     .about-section p { font-size: 1.1em; }
-    .perspective-container { height: 320px; }
+    .carousel-container { height: 340px; }
 }
 
 @media (max-width: 768px) {
@@ -210,11 +214,11 @@ section h2 {
     .main-header .tagline { font-size: 1em; }
     section { padding: 25px; }
     section h2 { font-size: 1.8em; }
-    .slider-item { width: 150px; height: 220px; padding: 10px; }
-    .slider-item img { width: 80px; height: 80px; border-width: 3px; }
-    .slider-item p { font-size: 1em; }
+    .carousel-item { width: 150px; height: 220px; padding: 12px; }
+    .carousel-item img { width: 90px; height: 90px; border-width: 3px; }
+    .carousel-item p { font-size: 1.1em; }
     .about-section p { font-size: 1em; }
-    .perspective-container { height: 280px; }
+    .carousel-container { height: 300px; }
 }
 
 @media (max-width: 480px) {
@@ -222,8 +226,8 @@ section h2 {
     .main-header .tagline { font-size: 0.9em; }
     section { padding: 15px; }
     section h2 { font-size: 1.5em; margin-bottom: 15px; }
-    .slider-item { width: 120px; height: 180px; padding: 8px; }
-    .slider-item img { width: 60px; height: 60px; border-width: 2px; }
-    .slider-item p { font-size: 0.9em; }
-    .perspective-container { height: 220px; }
+    .carousel-item { width: 100px; height: 160px; padding: 8px; }
+    .carousel-item img { width: 60px; height: 60px; border-width: 2px; }
+    .carousel-item p { font-size: 0.9em; }
+    .carousel-container { height: 220px; }
     }
