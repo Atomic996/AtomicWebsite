@@ -6,9 +6,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const carouselContainer = document.querySelector('.carousel-container');
     const carouselWrapper = document.querySelector('.carousel-wrapper');
     const carouselItems = gsap.utils.toArray('.carousel-item');
-    const prevBtn = document.querySelector('.carousel-nav.prev');
-    const nextBtn = document.querySelector('.carousel-nav.next');
-    const carouselDotsContainer = document.querySelector('.carousel-dots');
+    const prevBtn = document.querySelector('.carousel-nav.prev'); // زر السابق
+    const nextBtn = document.querySelector('.carousel-nav.next'); // زر التالي
+    const carouselDotsContainer = document.querySelector('.carousel-dots'); // حاوية النقاط
 
     // إعدادات الكاروسيل
     const numItems = carouselItems.length;
@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // الانتقال إلى عنصر معين (لأزرار التنقل والنقاط)
-    // لاحظ: هذه الوظيفة حالياً فقط تحدث النقاط ولا تغير دوران الكاروسيل
+    // ملاحظة: هذه الوظيفة حالياً فقط تحدث النقاط ولا تغير دوران الكاروسيل
     // ثلاثي الأبعاد بشكل جذري، حيث أن الدوران الرئيسي يتم بالماوس.
     // لتغيير دوران الكاروسيل بواسطة الأزرار، سيتطلب ذلك إعادة هيكلة
     // أكثر تعقيداً لمنطق الـ GSAP الحالي.
