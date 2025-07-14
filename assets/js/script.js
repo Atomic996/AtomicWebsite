@@ -12,8 +12,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // إعدادات الكاروسيل
     const numItems = carouselItems.length;
-    const radius = 650; // يمكن تعديل هذا الرقم لتغيير عمق الكاروسيل
-    const arcAngle = 100; // يمكن تعديل هذا الرقم لتغيير زاوية الكاروسيل
+    const radius = 850; // يمكن تعديل هذا الرقم لتغيير عمق الكاروسيل
+    const arcAngle = 120; // يمكن تعديل هذا الرقم لتغيير زاوية الكاروسيل
     const itemRotationOffset = 10;
     const maxRotationSensitivity = 40; // حساسية دوران الكاروسيل بالماوس
     let currentItemIndex = 0; // العنصر النشط حالياً
