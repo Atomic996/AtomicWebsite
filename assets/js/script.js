@@ -9,34 +9,33 @@ document.addEventListener('DOMContentLoaded', () => {
     const carouselDotsContainer = document.querySelector('.carousel-dots');
 
     const numItems = carouselItems.length;
-    // --- قيم تم تعديلها ---
-    const radius = 250; // تم تقليله من 300 لجعل العناصر أقرب وأكثر تباعدًا في العرض الأمامي
-    const arcAngle = 120; // زاوية القوس - تم الاحتفاظ بها
-    const itemRotationOffset = 0; // تم تعديله إلى 0 لضمان دوران طبيعي حول المحور
+    
+    // --- قيم تم تعديلها بشكل كبير لتجنب التداخل وإنشاء قوس شديد الانبساط ---
+    const veryLargeRadius = 1500; // نصف قطر كبير جدًا لجعل القوس مسطحًا تقريبًا
+    const veryWideArcAngle = 170; // زاوية واسعة جدًا (قريبة من 180 درجة لتبدو كخط مستقيم)
     // --- نهاية القيم المعدلة ---
+
     const maxRotationSensitivity = 40;
     let currentItemIndex = 0; // العنصر النشط حاليا
 
     function setupCarouselItems() {
-        const angleStep = arcAngle / (numItems - 1);
-        const startAngle = -arcAngle / 2;
+        const angleStep = veryWideArcAngle / (numItems - 1);
+        const startAngle = -veryWideArcAngle / 2;
 
         carouselItems.forEach((item, i) => {
             const currentAngle = startAngle + (i * angleStep);
             const radAngle = currentAngle * (Math.PI / 180); // تحويل الدرجات إلى راديان يدوياً
 
             gsap.set(item, {
-                x: Math.sin(radAngle) * radius,
-                y: Math.cos(radAngle) * radius - radius,
-                z: Math.cos(radAngle) * -radius,
-                rotationY: currentAngle + itemRotationOffset,
-                // --- قيم تم تعديلها ---
-                scale: 1 - (Math.abs(currentAngle) / (arcAngle / 2)) * 0.5, // زيادة تأثير التكبير/التصغير (كان 0.4)
-                opacity: 1 - (Math.abs(currentAngle) / (arcAngle / 2)) * 0.7, // زيادة تأثير الشفافية (كان 0.5)
-                // --- نهاية القيم المعدلة ---
+                x: Math.sin(radAngle) * veryLargeRadius, // توزيع أفقي كبير
+                y: 0, // لجعلها على خط أفقي مستقيم (لا يوجد ارتفاع أو انخفاض على القوس)
+                z: Math.cos(radAngle) * -veryLargeRadius, // دفع العناصر البعيدة إلى الخلف بشكل كبير
+                rotationY: currentAngle, // تدوير كل عنصر ليواجه مركز القوس
+                scale: 1, // الحجم الكامل في البداية
+                opacity: 1, // الشفافية الكاملة في البداية
                 transformOrigin: "center center",
                 pointerEvents: "auto",
-                zIndex: Math.round(100 - Math.abs(currentAngle))
+                zIndex: Math.round(1000 - Math.abs(currentAngle)) // z-index أعلى للأقرب
             });
         });
     }
@@ -60,25 +59,26 @@ document.addEventListener('DOMContentLoaded', () => {
             currentItemIndex = index;
         }
 
-        // حساب الزاوية المستهدفة لتدوير الكاروسيل
-        const targetAngle = -((arcAngle / (numItems - 1)) * currentItemIndex - (arcAngle / 2));
-        const rotationAmount = targetAngle;
+        // حساب الزاوية المستهدفة لتدوير الـ wrapper لجلب العنصر المحدد إلى المركز
+        const angleStep = veryWideArcAngle / (numItems - 1);
+        const startAngle = -veryWideArcAngle / 2;
+        const targetAngle = -((angleStep) * currentItemIndex + startAngle);
         
         gsap.to(carouselWrapper, {
-            rotationY: rotationAmount,
-            duration: 1.2, // تم زيادة المدة لجعل الانتقال أبطأ وأكثر سلاسة (كان 1)
+            rotationY: targetAngle,
+            duration: 1.2, // مدة الانتقال بين العناصر
             ease: "power3.out",
             onUpdate: () => {
                 carouselItems.forEach((item, i) => {
-                    const currentRotationY = parseFloat(gsap.get(carouselWrapper, 'rotationY'));
-                    const itemAngle = (arcAngle / (numItems - 1)) * i + (-arcAngle / 2) - currentRotationY;
+                    const currentWrapperRotationY = parseFloat(gsap.get(carouselWrapper, 'rotationY'));
+                    // الزاوية المرئية لكل عنصر بالنسبة للمشاهد بعد دوران الـ wrapper
+                    const itemVisualAngle = (angleStep * i + startAngle) - currentWrapperRotationY;
 
+                    // تطبيق تأثيرات الـ scale والـ opacity بناءً على قرب العنصر من المركز المرئي
                     gsap.to(item, {
-                        // --- قيم تم تعديلها ---
-                        scale: 1 - (Math.abs(itemAngle) / (arcAngle / 2)) * 0.5, // مطابقة لتعديل الـ scale في setupCarouselItems
-                        opacity: 1 - (Math.abs(itemAngle) / (arcAngle / 2)) * 0.7, // مطابقة لتعديل الـ opacity في setupCarouselItems
-                        // --- نهاية القيم المعدلة ---
-                        duration: 0.3
+                        scale: 1 - (Math.abs(itemVisualAngle) / (veryWideArcAngle / 2)) * 0.4, // تقليل الحجم بشكل أقل حدة
+                        opacity: 1 - (Math.abs(itemVisualAngle) / (veryWideArcAngle / 2)) * 0.6, // تقليل الشفافية بشكل أقل حدة
+                        duration: 0.3 // انتقال سلس للحجم والشفافية
                     });
                 });
             }
@@ -171,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // تحديث سنة الحقوق
     document.getElementById('currentYear').textContent = new Date().getFullYear();
 
-    // تأثيرات إضافية (إذا كانت تسبب مشاكل، يمكن إزالتها مؤقتًا)
+    // تأثيرات إضافية
     gsap.from('.carousel-item', {
         opacity: 0,
         y: 50,
