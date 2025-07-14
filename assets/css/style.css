@@ -5,10 +5,12 @@
     --accent-blue: #00A6ED;
     --accent-purple: #8A2BE2;
     --text-light: #E0E0E0;
+    /* Neon Glow values will be set dynamically by JS */
     --neon-glow: 0 0 10px var(--accent-primary), 0 0 20px var(--accent-primary);
     --deep-glow: 0 0 15px var(--accent-primary), 0 0 30px var(--accent-primary);
-    --accent-primary: var(--accent-blue); /* سيتم تغييرها بواسطة JS لليل/النهار */
-    --font-base: 'Cairo', system-ui, sans-serif; /* الخط الأساسي */
+    --accent-primary: var(--accent-blue); /* Default, overridden by JS for day/night */
+    --accent-primary-rgb: 0, 166, 237; /* Default RGB, overridden by JS */
+    --font-base: 'Cairo', system-ui, sans-serif; /* Basic Arabic font */
   }
 }
 
@@ -21,25 +23,25 @@
 
 body {
     font-family: var(--font-base);
-    background-color: var(--bg-dark); /* لون ثابت للخلفية الأساسية */
+    background-color: var(--bg-dark); /* Base background color, Three.js will overlay */
     color: var(--text-light);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    overflow-x: hidden;
+    overflow-x: hidden; /* Prevents horizontal scrollbar */
     position: relative;
     line-height: 1.8;
 }
 
-/* خلفية Three.js */
+/* Three.js Background Container */
 .threejs-background {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    z-index: -1;
-    pointer-events: none; /* للسماح بالتفاعل مع العناصر تحتها */
+    z-index: -1; /* Puts it behind other content */
+    pointer-events: none; /* Allows interaction with elements beneath it */
 }
 
 /* Skeleton Loader Styles */
@@ -89,8 +91,8 @@ body {
 }
 
 .skeleton-item {
-    flex-shrink: 0; /* منع العناصر من الانكماش */
-    width: 180px; /* Same as carousel-item width */
+    flex-shrink: 0;
+    width: 180px;
     height: 100%;
     background-color: rgba(255, 255, 255, 0.08);
     border-radius: 8px;
@@ -140,12 +142,12 @@ body {
 
 /* العنوان الرئيسي */
 .neon-title {
-    font-size: clamp(2rem, 5vw, 4.5rem); /* استخدام clamp لتجاوبية أفضل */
+    font-size: clamp(2rem, 5vw, 4.5rem);
     color: var(--text-light);
     text-shadow: var(--neon-glow);
     letter-spacing: 5px;
     margin-bottom: 10px;
-    transition: text-shadow 0.5s ease; /* للانتقال السلس بين الألوان */
+    transition: text-shadow 0.5s ease;
 }
 
 /* الشعار الفرعي */
@@ -173,7 +175,7 @@ body {
     margin-bottom: 60px;
     color: var(--text-light);
     text-shadow: var(--neon-glow);
-    transition: text-shadow 0.5s ease; /* للانتقال السلس بين الألوان */
+    transition: text-shadow 0.5s ease;
 }
 
 .neon-text {
@@ -184,27 +186,37 @@ body {
 /* الكاروسيل */
 .carousel-container {
     width: 100%;
-    overflow-x: scroll; /* جعل الحاوية قابلة للتمرير الأفقي */
-    scroll-snap-type: x mandatory; /* تفعيل scroll-snap */
-    overscroll-behavior-x: contain; /* لمنع التمرير الزائد */
-    -webkit-overflow-scrolling: touch; /* لتحسين التمرير على iOS */
-    padding: 20px 0; /* مسافة داخلية */
-    display: flex; /* لضمان عرض العناصر بجانب بعضها */
-    gap: 20px; /* مسافة بين العناصر */
-    scroll-behavior: smooth; /* تمرير سلس عند استخدام أزرار التنقل أو الوظائف البرمجية */
-    position: relative; /* لتحديد سياق @container */
-    container-type: inline-size; /* تعريف الحاوية لـ @container queries */
-    container-name: carousel-section; /* اسم اختياري للحاوية */
+    overflow-x: scroll; /* Enable horizontal scrolling */
+    scroll-snap-type: x mandatory; /* Snap to items */
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    padding: 20px 0;
+    display: flex; /* Arrange items horizontally */
+    gap: 20px; /* Space between items */
+    scroll-behavior: smooth;
+    position: relative;
+    container-type: inline-size; /* For @container queries */
+    container-name: carousel-section;
 }
+
+/* Hide scrollbar for webkit browsers */
+.carousel-container::-webkit-scrollbar {
+    display: none;
+}
+/* Hide scrollbar for Firefox */
+.carousel-container {
+    scrollbar-width: none;
+}
+
 
 /* عناصر الكاروسيل */
 .carousel-item {
-    flex-shrink: 0; /* منع العناصر من الانكماش */
-    width: 200px; /* عرض افتراضي */
-    aspect-ratio: 1/1.5; /* نسبة عرض إلى ارتفاع */
-    scroll-snap-align: center; /* تثبيت العنصر في المنتصف عند التمرير */
+    flex-shrink: 0; /* Prevent items from shrinking */
+    width: 200px; /* Default width */
+    aspect-ratio: 1/1.5; /* Aspect ratio for height */
+    scroll-snap-align: center; /* Snap to center */
     background-color: rgba(0, 0, 0, 0.4);
-    border: 2px solid var(--accent-primary); /* استخدام اللون الرئيسي المتغير */
+    border: 2px solid var(--accent-primary);
     border-radius: 10px;
     display: flex;
     flex-direction: column;
@@ -214,10 +226,16 @@ body {
     text-align: center;
     text-decoration: none;
     color: var(--text-light);
-    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.5s ease; /* انتقال سلس للتحول وتغيير اللون */
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.5s ease, box-shadow 0.5s ease;
     position: relative;
     overflow: hidden;
+    cursor: grab; /* Indicates draggable */
 }
+
+.carousel-item:active {
+    cursor: grabbing;
+}
+
 
 .carousel-item::before {
     content: '';
@@ -234,7 +252,7 @@ body {
 
 .carousel-item:hover {
     transform: scale(1.05) translateY(-5px);
-    box-shadow: 0 0 15px var(--accent-primary); /* استخدام اللون الرئيسي المتغير */
+    box-shadow: 0 0 15px var(--accent-primary);
 }
 
 .carousel-item:hover::before {
@@ -244,7 +262,7 @@ body {
 .carousel-item .icon-circle {
     width: 90px;
     height: 90px;
-    border: 4px solid var(--accent-primary); /* استخدام اللون الرئيسي المتغير */
+    border: 4px solid var(--accent-primary);
     border-radius: 50%;
     display: flex;
     justify-content: center;
@@ -252,26 +270,25 @@ body {
     margin-bottom: 15px;
     font-size: 2.5rem;
     background-color: rgba(0, 0, 0, 0.6);
-    box-shadow: 0 0 10px rgba(var(--accent-primary-rgb), 0.5); /* استخدام اللون الرئيسي المتغير */
+    box-shadow: 0 0 10px rgba(var(--accent-primary-rgb), 0.5);
     transition: border-color 0.5s ease, box-shadow 0.5s ease;
     position: relative;
     z-index: 1;
 }
 
-/* الأنماط المضافة للأيقونات الخطية وتأثير التفاعل */
+/* Styling for Font Awesome icons */
 .carousel-item .icon-circle i {
-    font-weight: 300; /* لجعل الخطوط تبدو أرق */
-    transition: color 0.3s ease, transform 0.3s ease; /* إضافة انتقال سلس للتفاعل */
+    font-weight: 300; /* Makes icons look thinner */
+    color: var(--text-light); /* Default color for icons */
+    transition: color 0.3s ease, transform 0.3s ease;
 }
 
 .carousel-item:hover .icon-circle i {
-    color: var(--accent-primary); /* تغيير اللون عند التمرير */
-    transform: scale(1.1); /* تكبير الأيقونة قليلاً عند التمرير */
+    color: var(--accent-primary); /* Change color on hover */
+    transform: scale(1.1); /* Slightly enlarge icon on hover */
 }
-/* نهاية الأنماط المضافة */
 
-
-/* ألوان أيقونات التواصل الاجتماعي */
+/* Specific colors for social media icons - background and border */
 .icon-circle.facebook { background-color: #3b5998; border-color: #3b5998; }
 .icon-circle.instagram { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%); border-color: #d6249f; }
 .icon-circle.youtube { background-color: #ff0000; border-color: #ff0000; }
@@ -329,8 +346,8 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 3rem; /* Placeholder, يمكن وضع صورة أو نموذج 3D هنا */
-    overflow: hidden; /* للتأكد من أن أي نموذج 3D لا يتجاوز الحدود */
+    font-size: 3rem; /* Placeholder, can put an image or 3D model here */
+    overflow: hidden;
     transition: border-color 0.5s ease, box-shadow 0.5s ease;
 }
 
@@ -348,7 +365,7 @@ body {
 }
 
 .action-button:hover {
-    background-color: var(--accent-blue); /* أو لون أفتح قليلاً من primary */
+    background-color: var(--accent-blue); /* or a slightly lighter shade of primary */
     transform: translateY(-3px);
     box-shadow: 0 5px 20px rgba(var(--accent-primary-rgb), 0.8);
 }
@@ -365,13 +382,13 @@ body {
 }
 
 .signature span {
-    font-family: 'Dancing Script', cursive; /* خط مختلف للتوقيع */
+    font-family: 'Dancing Script', cursive; /* Specific font for signature, make sure to import if needed */
     font-size: 3rem;
     color: var(--text-light);
     text-shadow: var(--neon-glow);
     display: inline-block;
     padding: 0 20px;
-    background-color: var(--bg-dark); /* لإعطاء خلفية للنص فوق الخط */
+    background-color: var(--bg-dark);
     z-index: 1;
     position: relative;
 }
@@ -395,7 +412,7 @@ body {
     text-align: center;
     padding: 30px 20px;
     background-color: rgba(0, 0, 0, 0.3);
-    margin-top: auto; /* يدفع التذييل للأسفل */
+    margin-top: auto;
     border-top: 1px solid rgba(var(--accent-primary-rgb), 0.2);
     transition: border-color 0.5s ease;
 }
@@ -414,7 +431,7 @@ body {
 
 /* زر العودة للأعلى */
 #backToTopBtn {
-    display: none; /* مخفي مبدئيًا */
+    display: none; /* Hidden by default */
     position: fixed;
     bottom: 30px;
     right: 30px;
@@ -437,7 +454,7 @@ body {
     box-shadow: 0 8px 20px rgba(var(--accent-primary-rgb), 0.7);
 }
 
-/* ScrollTrigger (إذا كان سيتم استخدام ScrollTrigger مع أقسام محددة) */
+/* Scroll effects for header */
 .main-header.scrolled {
     padding: 20px 20px;
     background-color: rgba(0, 0, 0, 0.7);
@@ -455,21 +472,21 @@ body {
     transform: translateY(-10px);
 }
 
-/* @container query for carousel items */
+/* @container query for carousel items (responsive adjustment based on parent width) */
 @container carousel-section (min-width: 600px) {
   .carousel-item {
-    width: 250px; /* Adjust width when container is wider */
+    width: 250px;
   }
 }
 
 @container carousel-section (min-width: 900px) {
   .carousel-item {
-    width: 300px; /* Further adjust width for larger containers */
+    width: 300px;
   }
 }
 
 
-/* Media Queries */
+/* Media Queries for responsiveness */
 @media (max-width: 768px) {
     .main-header {
         padding: 30px 15px;
@@ -525,8 +542,6 @@ body {
         bottom: 20px;
         right: 20px;
     }
-    /* إخفاء الشعار تماما على الجوالات */
-    .main-header.scrolled .tagline { opacity: 0; transform: translateY(-10px); }
 }
 
 @media (max-width: 480px) {
@@ -535,16 +550,9 @@ body {
     .tagline { font-size: 1rem; }
     .section-title { font-size: 1.8rem; margin-bottom: 40px;}
     .content-wrapper { margin-top: 100px; padding: 10px;}
-    .carousel-container { height: auto; } /* لا نحدد ارتفاع ثابت مع scroll-snap */
-    .carousel-item { width: 150px; /* حجم أصغر */ aspect-ratio: 1/1.5; padding: 15px; }
+    .carousel-item { width: 150px; aspect-ratio: 1/1.5; padding: 15px; }
     .carousel-item .icon-circle { width: 80px; height: 80px; border-width: 3px; font-size: 2rem;}
     .carousel-item p { font-size: 1.2rem; }
     section { padding: 20px; }
     .bio-content { font-size: 1rem; }
-}
-
-/* Helper class for RGB values */
-:root {
-  --accent-blue-rgb: 0, 166, 237;
-  --accent-purple-rgb: 138, 43, 226;
   }
