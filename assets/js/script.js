@@ -1,348 +1,267 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // ---------------------------------------------------
-    // 1. Skeleton Loader & Main Content Display
-    // ---------------------------------------------------
+    // تحديد العناصر الأساسية في الصفحة
+    const carouselContainer = document.querySelector('.carousel-container');
+    const carouselWrapper = document.querySelector('.carousel-wrapper');
+    const carouselItems = Array.from(document.querySelectorAll('.carousel-item'));
+    const playBioButton = document.getElementById('play-bio');
+    const bioTextElement = document.getElementById('bio-text');
+    const backToTopBtn = document.getElementById('backToTopBtn');
+    const mainHeader = document.querySelector('.main-header');
+    const neonTitles = document.querySelectorAll('.neon-title, .section-title, .signature span');
     const skeletonLoader = document.getElementById('skeleton-loader');
     const mainContent = document.getElementById('main-content');
+    const currentYearSpan = document.getElementById('currentYear');
 
-    // Simulate content loading for 2 seconds
+    // تحديث سنة الحقوق تلقائيًا
+    if (currentYearSpan) {
+        currentYearSpan.textContent = new Date().getFullYear();
+    }
+
+    // إخفاء الـ Skeleton Loader وإظهار المحتوى بعد التحميل
+    // استخدام setTimeout لمحاكاة وقت تحميل لضمان رؤية الـ loader
     setTimeout(() => {
-        skeletonLoader.classList.add('hidden');
-        skeletonLoader.addEventListener('transitionend', () => {
-            skeletonLoader.remove(); // Remove from DOM after transition
-            mainContent.style.display = 'block'; // Show main content
-            // Force reflow to ensure display is applied before opacity transition
-            mainContent.offsetHeight; 
-            mainContent.style.opacity = '1'; // Fade in main content if desired via CSS
-        }, { once: true });
-    }, 2000); // 2 seconds delay
-
-    // Initial opacity for main content (can be handled by CSS if preferred)
-    mainContent.style.opacity = '0';
+        if (skeletonLoader) skeletonLoader.classList.add('hidden');
+        if (mainContent) mainContent.style.display = 'block';
+    }, 1500); // إظهار المحتوى بعد 1.5 ثانية (يمكن تعديل المدة)
 
 
-    // ---------------------------------------------------
-    // 2. Three.js Atomic Background
-    // ---------------------------------------------------
-    const threejsBackgroundContainer = document.getElementById('threejs-background');
-    if (threejsBackgroundContainer && typeof THREE !== 'undefined') {
-        let scene, camera, renderer, particles, lines;
-        let particleCount = 200; // Number of particles
-        let particleMaterial; // Declare material outside to change color
+    // ----------------------------------------------------
+    // وظيفة تبديل الألوان (الليل/النهار) وتأثير النيون
+    // ----------------------------------------------------
+    function updateColorsBasedOnTime() {
+        const date = new Date();
+        const hour = date.getHours(); // الساعة الحالية (0-23)
 
-        function initThreeJS() {
-            // Scene
-            scene = new THREE.Scene();
-
-            // Camera
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.z = 5;
-
-            // Renderer
-            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            threejsBackgroundContainer.appendChild(renderer.domElement);
-
-            // Particles
-            const particleGeometry = new THREE.BufferGeometry();
-            const positions = [];
-            const colors = [];
-            const sizes = []; // For different particle sizes
-
-            const color1 = new THREE.Color(0x00A6ED); // Accent Blue
-            const color2 = new THREE.Color(0x8A2BE2); // Accent Purple
-
-            for (let i = 0; i < particleCount; i++) {
-                // Random position within a cube
-                positions.push(
-                    (Math.random() - 0.5) * 10, // x
-                    (Math.random() - 0.5) * 10, // y
-                    (Math.random() - 0.5) * 10  // z
-                );
-                // Gradient color for each particle
-                const lerpFactor = Math.random(); // Random factor for color interpolation
-                const mixedColor = new THREE.Color().lerpColors(color1, color2, lerpFactor);
-                colors.push(mixedColor.r, mixedColor.g, mixedColor.b);
-                sizes.push(Math.random() * 0.1 + 0.05); // Random size between 0.05 and 0.15
-            }
-
-            particleGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-            particleGeometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-            particleGeometry.setAttribute('size', new THREE.Float32BufferAttribute(sizes, 1));
-
-            particleMaterial = new THREE.PointsMaterial({
-                size: 0.1, // Base size
-                vertexColors: true, // Use vertex colors
-                transparent: true,
-                opacity: 0.7,
-                blending: THREE.AdditiveBlending, // For glowing effect
-                sizeAttenuation: true // Particles closer to camera appear larger
-            });
-
-            particles = new THREE.Points(particleGeometry, particleMaterial);
-            scene.add(particles);
-
-            // Lines (connections)
-            const lineMaterial = new THREE.LineBasicMaterial({
-                color: 0x8A2BE2, // Initial purple (will be updated dynamically)
-                transparent: true,
-                opacity: 0.2
-            });
-
-            const lineSegments = new Float32Array(particleCount * 3 * 2); // (count * 2 points * 3 coords)
-
-            lines = new THREE.LineSegments(new THREE.BufferGeometry(), lineMaterial);
-            scene.add(lines);
-
-            // Dynamically update line colors based on accent-primary
-            function updateLineColor() {
-                const computedStyle = getComputedStyle(document.documentElement);
-                const accentPrimary = computedStyle.getPropertyValue('--accent-primary').trim();
-                lineMaterial.color.set(accentPrimary);
-            }
-            // Initial call
-            updateLineColor();
-            // Listen for custom event to update color when theme changes
-            document.addEventListener('themeChange', updateLineColor);
-
-            // Animation loop
-            animateThreeJS();
+        // تحديد الألوان بناءً على الوقت
+        let accentPrimary, accentPrimaryRgb;
+        if (hour >= 6 && hour < 18) { // النهار (من 6 صباحًا إلى 6 مساءً)
+            accentPrimary = '#00A6ED'; // أزرق
+            accentPrimaryRgb = '0, 166, 237';
+        } else { // الليل (من 6 مساءً إلى 6 صباحًا)
+            accentPrimary = '#8A2BE2'; // بنفسجي
+            accentPrimaryRgb = '138, 43, 226';
         }
 
-        function animateThreeJS() {
-            requestAnimationFrame(animateThreeJS);
-
-            // Particle movement (simple rotation for atomic feel)
-            if (particles) {
-                particles.rotation.x += 0.0005;
-                particles.rotation.y += 0.0007;
-            }
-
-            // Update lines
-            if (lines) {
-                const positions = particles.geometry.attributes.position.array;
-                const lineSegments = [];
-                const maxDistance = 2; // Connect particles within this distance
-
-                for (let i = 0; i < particleCount; i++) {
-                    const p1x = positions[i * 3];
-                    const p1y = positions[i * 3 + 1];
-                    const p1z = positions[i * 3 + 2];
-
-                    for (let j = i + 1; j < particleCount; j++) {
-                        const p2x = positions[j * 3];
-                        const p2y = positions[j * 3 + 1];
-                        const p2z = positions[j * 3 + 2];
-
-                        const distance = Math.sqrt(
-                            (p2x - p1x) ** 2 +
-                            (p2y - p1y) ** 2 +
-                            (p2z - p1z) ** 2
-                        );
-
-                        if (distance < maxDistance) {
-                            lineSegments.push(p1x, p1y, p1z, p2x, p2y, p2z);
-                        }
-                    }
-                }
-                lines.geometry.setAttribute('position', new THREE.Float32BufferAttribute(lineSegments, 3));
-                lines.geometry.attributes.position.needsUpdate = true;
-            }
-
-            renderer.render(scene, camera);
-        }
-
-        // Handle window resize
-        function onWindowResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        }
-
-        window.addEventListener('resize', onWindowResize);
-
-        // Initialize Three.js when the script loads
-        initThreeJS();
-    } else {
-        console.warn("Three.js not loaded or container not found. Atomic background will not render.");
+        // تحديث متغيرات CSS
+        document.documentElement.style.setProperty('--accent-primary', accentPrimary);
+        document.documentElement.style.setProperty('--accent-primary-rgb', accentPrimaryRgb);
+        document.documentElement.style.setProperty('--neon-glow', `0 0 10px ${accentPrimary}, 0 0 20px ${accentPrimary}`);
+        document.documentElement.style.setProperty('--deep-glow', `0 0 15px ${accentPrimary}, 0 0 30px ${accentPrimary}`);
     }
 
-
-    // ---------------------------------------------------
-    // 3. Day/Night Theme (Dynamic CSS Variable)
-    // ---------------------------------------------------
-    function updateThemeColors() {
-        const hour = new Date().getHours();
-        const root = document.documentElement;
-        const isNight = hour > 18 || hour < 6;
-
-        const accentPrimary = isNight ? '#8A2BE2' : '#00A6ED'; // Purple for night, Blue for day
-        const accentPrimaryRgb = isNight ? '138, 43, 226' : '0, 166, 237';
-
-        root.style.setProperty('--accent-primary', accentPrimary);
-        root.style.setProperty('--accent-primary-rgb', accentPrimaryRgb);
-
-        // Dispatch a custom event to notify other parts of the app (like Three.js lines)
-        document.dispatchEvent(new CustomEvent('themeChange'));
-    }
-
-    // Call on load and every hour (or more frequently if needed)
-    updateThemeColors();
-    setInterval(updateThemeColors, 3600000); // Update every hour (3600000 ms)
+    // استدعاء الوظيفة عند تحميل الصفحة وكل دقيقة لتحديث الألوان
+    updateColorsBasedOnTime();
+    setInterval(updateColorsBasedOnTime, 60 * 1000); // تحديث كل دقيقة (60 ثانية * 1000 مللي ثانية)
 
 
-    // ---------------------------------------------------
-    // 4. "Listen to Bio" (Text-to-Speech)
-    // ---------------------------------------------------
-    const playBioBtn = document.getElementById('play-bio');
-    const bioTextElement = document.getElementById('bio-text');
-
-    if (playBioBtn && bioTextElement) {
+    // ----------------------------------------------------
+    // وظيفة Text-to-Speech (تحويل النص إلى كلام)
+    // ----------------------------------------------------
+    if (playBioButton && bioTextElement) {
+        const bioText = bioTextElement.textContent;
+        let speechSynth = window.speechSynthesis;
+        let currentUtterance = null;
         let isSpeaking = false;
-        let utterance = null;
-        let currentVoice = null;
 
-        // Function to find an English male voice
-        function findEnglishMaleVoice() {
-            const voices = window.speechSynthesis.getVoices();
-            // Try to find a male English voice
-            for (const voice of voices) {
-                // Heuristic for male voice, might not be perfect
-                if (voice.lang.startsWith('en') && (voice.name.includes('Male') || voice.name.includes('David') || voice.name.includes('Google US English Male'))) {
-                    return voice;
-                }
-            }
-            // Fallback to any English voice if specific male voice not found
-            for (const voice of voices) {
-                if (voice.lang.startsWith('en')) {
-                    return voice;
-                }
-            }
-            return null; // No English voice found
-        }
+        // التحقق مما إذا كانت واجهة SpeechSynthesis متاحة
+        if ('speechSynthesis' in window) {
+            playBioButton.addEventListener('click', () => {
+                if (!isSpeaking) {
+                    currentUtterance = new SpeechSynthesisUtterance(bioText);
+                    currentUtterance.lang = 'ar-SA'; // تعيين اللغة العربية
+                    currentUtterance.pitch = 1;     // درجة الصوت (1 هو الافتراضي)
+                    currentUtterance.rate = 1;       // سرعة الكلام (1 هو الافتراضي)
 
-        // Voices are loaded asynchronously, so wait for them
-        window.speechSynthesis.onvoiceschanged = () => {
-            currentVoice = findEnglishMaleVoice();
-        };
+                    // عندما يبدأ الكلام
+                    currentUtterance.onstart = () => {
+                        isSpeaking = true;
+                        playBioButton.innerHTML = 'إيقاف السيرة الذاتية <i class="fas fa-pause"></i>';
+                        playBioButton.classList.add('playing');
+                    };
 
-        // Ensure voices are loaded if the event already fired
-        if (window.speechSynthesis.getVoices().length > 0) {
-            currentVoice = findEnglishMaleVoice();
-        }
+                    // عندما يتوقف الكلام
+                    currentUtterance.onend = () => {
+                        isSpeaking = false;
+                        playBioButton.innerHTML = 'استمع إلى السيرة الذاتية <i class="fas fa-volume-up"></i>';
+                        playBioButton.classList.remove('playing');
+                    };
 
-        playBioBtn.addEventListener('click', () => {
-            if (isSpeaking) {
-                window.speechSynthesis.cancel();
-                isSpeaking = false;
-                playBioBtn.innerHTML = 'استمع إلى السيرة الذاتية <i class="fas fa-volume-up"></i>';
-            } else {
-                const textToSpeak = bioTextElement.textContent || "مرحباً بك في عالمي الرقمي! أنا أتوميك، مصمم تجارب تفاعلية.";
-                utterance = new SpeechSynthesisUtterance(textToSpeak);
+                    // عند حدوث خطأ
+                    currentUtterance.onerror = (event) => {
+                        console.error('Speech synthesis error:', event.error);
+                        isSpeaking = false;
+                        playBioButton.innerHTML = 'استمع إلى السيرة الذاتية <i class="fas fa-volume-up"></i>';
+                        playBioButton.classList.remove('playing');
+                        alert('حدث خطأ أثناء تشغيل السيرة الذاتية. قد لا يكون متصفحك يدعم هذه الميزة أو لا يتوفر صوت للغة العربية.');
+                    };
 
-                if (currentVoice) {
-                    utterance.voice = currentVoice;
+                    speechSynth.speak(currentUtterance);
                 } else {
-                    // Fallback to default if no specific voice found
-                    utterance.lang = 'en-US'; // Default to US English
-                    console.warn("No specific English male voice found, using default English voice.");
+                    speechSynth.cancel(); // إيقاف الكلام الحالي
                 }
-
-                utterance.rate = 1; // Speed of speech
-                utterance.pitch = 1; // Pitch of speech
-
-                utterance.onstart = () => {
-                    isSpeaking = true;
-                    playBioBtn.innerHTML = 'إيقاف الاستماع <i class="fas fa-volume-mute"></i>';
-                };
-
-                utterance.onend = () => {
-                    isSpeaking = false;
-                    playBioBtn.innerHTML = 'استمع إلى السيرة الذاتية <i class="fas fa-volume-up"></i>';
-                };
-
-                utterance.onerror = (event) => {
-                    console.error('SpeechSynthesisUtterance.onerror', event);
-                    isSpeaking = false;
-                    playBioBtn.innerHTML = 'استمع إلى السيرة الذاتية <i class="fas fa-volume-up"></i>';
-                    alert("عذراً، حدث خطأ في تشغيل الصوت. يرجى المحاولة مرة أخرى.");
-                };
-
-                window.speechSynthesis.speak(utterance);
-            }
-        });
+            });
+        } else {
+            // إظهار رسالة إذا كان المتصفح لا يدعم SpeechSynthesis
+            playBioButton.textContent = 'متصفحك لا يدعم القراءة الصوتية';
+            playBioButton.disabled = true;
+            playBioButton.classList.add('disabled');
+        }
     }
 
-
-    // ---------------------------------------------------
-    // 5. Scroll-based Header & Back-to-Top Button
-    // ---------------------------------------------------
-    const mainHeader = document.querySelector('.main-header');
-    const backToTopBtn = document.getElementById('backToTopBtn');
-
-    window.addEventListener('scroll', () => {
-        // Header shrink/expand
-        if (mainHeader) {
-            if (window.scrollY > 50) {
-                mainHeader.classList.add('scrolled');
-            } else {
-                mainHeader.classList.remove('scrolled');
-            }
-        }
-
-        // Back to top button visibility
-        if (backToTopBtn) {
-            if (window.scrollY > 300) { // Show after scrolling 300px
+    // ----------------------------------------------------
+    // زر العودة للأعلى (Back To Top Button)
+    // ----------------------------------------------------
+    if (backToTopBtn) {
+        // إظهار/إخفاء الزر عند التمرير
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) { // يظهر الزر بعد التمرير 300 بكسل
                 backToTopBtn.style.display = 'block';
             } else {
                 backToTopBtn.style.display = 'none';
             }
-        }
-    });
 
-    if (backToTopBtn) {
+            // إضافة/إزالة فئة 'scrolled' للرأس لتغيير نمطه عند التمرير
+            if (mainHeader) {
+                if (window.scrollY > 50) { // بعد التمرير 50 بكسل
+                    mainHeader.classList.add('scrolled');
+                } else {
+                    mainHeader.classList.remove('scrolled');
+                }
+            }
+        });
+
+        // عند النقر على الزر، قم بالتمرير إلى أعلى الصفحة بسلاسة
         backToTopBtn.addEventListener('click', () => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth' // تمرير سلس
+            });
+        });
+    }
+
+    // ----------------------------------------------------
+    // تأثير خلفية الجسيمات المتحركة باستخدام Three.js
+    // ----------------------------------------------------
+    const threejsBackground = document.getElementById('threejs-background');
+    if (threejsBackground && typeof THREE !== 'undefined') {
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }); // alpha: true للسماح بالخلفية الشفافة (CSS)
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        threejsBackground.appendChild(renderer.domElement);
+
+        camera.position.z = 5;
+
+        // إنشاء الجسيمات
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlesCount = 2000; // عدد الجسيمات
+        const posArray = new Float32Array(particlesCount * 3); // x, y, z لكل جسيم
+
+        for (let i = 0; i < particlesCount * 3; i++) {
+            posArray[i] = (Math.random() - 0.5) * 10; // توزيع الجسيمات من -5 إلى 5
+        }
+
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+        // المواد (Material) للجسيمات
+        const particlesMaterial = new THREE.PointsMaterial({
+            size: 0.015, // حجم الجسيمات
+            transparent: true,
+            blending: THREE.AdditiveBlending, // وضع المزج لإعطاء تأثير توهج
+            color: new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue('--accent-primary').trim()) // لون الجسيمات من متغير CSS
+        });
+
+        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particlesMesh);
+
+        // وظيفة تحديث الألوان للجسيمات (عندما يتغير accent-primary)
+        function updateParticleColor() {
+            if (particlesMaterial) {
+                particlesMaterial.color.set(getComputedStyle(document.documentElement).getPropertyValue('--accent-primary').trim());
+            }
+        }
+        // مراقبة التغييرات في متغير CSS لتحديث لون الجسيمات
+        const observer = new MutationObserver(() => {
+            updateParticleColor();
+        });
+        observer.observe(document.documentElement, { attributes: true, attributeFilter: ['style'] });
+
+
+        // الرسوم المتحركة
+        const animate = () => {
+            requestAnimationFrame(animate);
+
+            // تحريك الجسيمات
+            particlesMesh.rotation.y += 0.0001; // دوران بطيء حول محور Y
+            particlesMesh.rotation.x += 0.00005; // دوران بطيء حول محور X
+            particlesMesh.position.z -= 0.001; // حركة بطيئة نحو الكاميرا
+
+            // إعادة تعيين موضع الجسيمات عند تجاوزها للكاميرا لإنشاء حلقة لا نهائية
+            if (particlesMesh.position.z < -5) {
+                particlesMesh.position.z = 5;
+            }
+
+            renderer.render(scene, camera);
+        };
+        animate();
+
+        // التعامل مع تغيير حجم النافذة
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
         });
     }
 
 
-    // ---------------------------------------------------
-    // 6. Navigation Highlighting with IntersectionObserver
-    // ---------------------------------------------------
-    // This is prepared for future navigation links if added.
-    // Assuming sections have IDs like 'about', 'contact', etc.
-    // And nav links have hrefs like '#about', '#contact'.
-    const sections = document.querySelectorAll('section'); // Adjust selector as needed
+    // ----------------------------------------------------
+    // الكاروسيل الأفقي (Horizontal Carousel) - لا يستخدم GSAP MotionPath
+    // ----------------------------------------------------
+    if (carouselContainer && carouselWrapper && carouselItems.length > 0) {
+        let currentScroll = 0;
+        const scrollAmount = 250; // مقدار التمرير لكل نقرة
 
-    const navigationAI = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                // Find corresponding nav link and add 'active' class
-                const currentSectionId = entry.target.id;
-                document.querySelectorAll('nav a').forEach(link => {
-                    link.classList.remove('active');
-                    if (link.hash === `#${currentSectionId}`) {
-                        link.classList.add('active');
-                    }
-                });
-            }
+        // جعل الكاروسيل قابل للتمرير الأفقي بالماوس
+        let isDown = false;
+        let startX;
+        let scrollLeft;
+
+        carouselContainer.addEventListener('mousedown', (e) => {
+            isDown = true;
+            carouselContainer.classList.add('active');
+            startX = e.pageX - carouselContainer.offsetLeft;
+            scrollLeft = carouselContainer.scrollLeft;
         });
-    }, { threshold: 0.6 }); // Trigger when 60% of the section is visible
 
-    sections.forEach(section => {
-        // Only observe sections that actually have an ID and might be targeted by a nav link
-        if (section.id) {
-            navigationAI.observe(section);
+        carouselContainer.addEventListener('mouseleave', () => {
+            isDown = false;
+            carouselContainer.classList.remove('active');
+        });
+
+        carouselContainer.addEventListener('mouseup', () => {
+            isDown = false;
+            carouselContainer.classList.remove('active');
+        });
+
+        carouselContainer.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - carouselContainer.offsetLeft;
+            const walk = (x - startX) * 2; // سرعة التمرير
+            carouselContainer.scrollLeft = scrollLeft - walk;
+        });
+
+        // Smooth scroll to an item (for potential future navigation buttons or dots)
+        function scrollToItem(index) {
+            if (index < 0 || index >= carouselItems.length) return;
+            const item = carouselItems[index];
+            carouselContainer.scrollTo({
+                left: item.offsetLeft - (carouselContainer.offsetWidth / 2) + (item.offsetWidth / 2),
+                behavior: 'smooth'
+            });
         }
-    });
 
-
-    // ---------------------------------------------------
-    // 7. Update Current Year in Footer
-    // ---------------------------------------------------
-    const currentYearSpan = document.getElementById('currentYear');
-    if (currentYearSpan) {
-        currentYearSpan.textContent = new Date().getFullYear();
+        // ملاحظة: تم إزالة كود GSAP MotionPathPlugin هنا لأن الكاروسيل أصبح أفقيًا بسيطًا
+        // إذا كنت ترغب في تأثير قوس معقد، يمكننا إعادة إضافته مع مكتبة GSAP.
     }
 });
