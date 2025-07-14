@@ -139,14 +139,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const items = elements.carouselWrapper.querySelectorAll('.carousel-item');
         const totalItems = items.length;
-        const radius = 400; // نصف قطر أصغر لتناسب 4 أيقونات
-        const angleIncrement = (2 * Math.PI) / totalItems; // 360 درجة مقسمة على 4
+        const radius = 350; // تقليل النصف قطر لتجنب التداخل
+        const angleIncrement = (2 * Math.PI) / totalItems; // 360 درجة مقسمة بالتساوي
 
         const positionItems = () => {
             items.forEach((item, index) => {
-                const angle = index * angleIncrement; // تبدأ من 0 إلى 2π
+                const angle = index * angleIncrement; // توزيع متساوٍ
                 const x = radius * Math.sin(angle);
-                const z = radius * (1 - Math.cos(angle));
+                const z = radius * Math.cos(angle); // استخدام cos لتجنب التشوه
                 item.style.transform = `translateX(${x}px) translateZ(${z}px) rotateY(${angle * (180 / Math.PI)}deg)`;
             });
         };
@@ -154,16 +154,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let isDragging = false;
         let startX, startRotation = 0;
-        const maxRotation = 45; // زيادة الحد الأقصى للدوران لتتناسب مع الدائرة
+        const maxRotation = 45;
 
         const updateRotation = (clientX) => {
             const rect = elements.carouselWrapper.getBoundingClientRect();
             const centerX = rect.left + rect.width / 2;
             const offsetX = (clientX - centerX) / rect.width;
-            const rotation = -offsetX * maxRotation;
+            const rotation = offsetX * maxRotation; // عكس الاتجاه لتحسين التجربة
             elements.carouselWrapper.style.transform = `rotateY(${rotation}deg)`;
         };
 
+        // أحداث الفأرة
         elements.carouselWrapper.addEventListener('mousedown', (e) => {
             isDragging = true;
             startX = e.clientX;
@@ -171,43 +172,57 @@ document.addEventListener('DOMContentLoaded', () => {
             elements.carouselWrapper.classList.add('active');
         });
 
-        elements.carouselWrapper.addEventListener('touchstart', (e) => {
-            isDragging = true;
-            startX = e.touches[0].clientX;
-            startRotation = parseFloat(getComputedStyle(elements.carouselWrapper).transform.split(',')[5]) || 0;
-            elements.carouselWrapper.classList.add('active');
-        }, { passive: true });
-
         document.addEventListener('mousemove', (e) => {
             if (!isDragging) return;
             updateRotation(e.clientX);
         });
-
-        document.addEventListener('touchmove', (e) => {
-            if (!isDragging) return;
-            e.preventDefault();
-            updateRotation(e.touches[0].clientX);
-        }, { passive: false });
 
         document.addEventListener('mouseup', () => {
             isDragging = false;
             elements.carouselWrapper.classList.remove('active');
         });
 
-        document.addEventListener('touchend', () => {
+        // أحداث اللمس (تحسين الاستجابة)
+        elements.carouselWrapper.addEventListener('touchstart', (e) => {
+            isDragging = true;
+            startX = e.touches[0].clientX;
+            startRotation = parseFloat(getComputedStyle(elements.carouselWrapper).transform.split(',')[5]) || 0;
+            e.preventDefault(); // منع السلوك الافتراضي
+            elements.carouselWrapper.classList.add('active');
+        }, { passive: false });
+
+        elements.carouselWrapper.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault(); // منع التمرير الافتراضي
+            updateRotation(e.touches[0].clientX);
+        }, { passive: false });
+
+        elements.carouselWrapper.addEventListener('touchend', () => {
             isDragging = false;
             elements.carouselWrapper.classList.remove('active');
         });
 
+        // تحسين التفاعل عند التحويم
         items.forEach((item) => {
             item.addEventListener('mouseenter', () => {
                 item.style.transition = 'transform 0.4s ease, box-shadow 0.4s ease';
             });
             item.addEventListener('mouseleave', () => {
-                const angle = item.dataset.index * angleIncrement;
+                const angle = parseInt(item.dataset.index) * angleIncrement;
                 const x = radius * Math.sin(angle);
-                const z = radius * (1 - Math.cos(angle));
+                const z = radius * Math.cos(angle);
                 item.style.transform = `translateX(${x}px) translateZ(${z}px) rotateY(${angle * (180 / Math.PI)}deg)`;
+            });
+            item.addEventListener('touchstart', () => {
+                item.style.transform = 'scale(1.1) translateZ(50px)';
+                item.style.zIndex = '10';
+            });
+            item.addEventListener('touchend', () => {
+                const angle = parseInt(item.dataset.index) * angleIncrement;
+                const x = radius * Math.sin(angle);
+                const z = radius * Math.cos(angle);
+                item.style.transform = `translateX(${x}px) translateZ(${z}px) rotateY(${angle * (180 / Math.PI)}deg)`;
+                item.style.zIndex = '1';
             });
         });
 
