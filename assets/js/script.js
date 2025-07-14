@@ -1,155 +1,155 @@
+// ملف: assets/js/script.js
 document.addEventListener('DOMContentLoaded', () => {
-    // تحديد العناصر الأساسية في الصفحة
-    const carouselContainer = document.querySelector('.carousel-container');
-    const playBioButton = document.getElementById('play-bio');
-    const bioTextElement = document.getElementById('bio-text');
-    const backToTopBtn = document.getElementById('backToTopBtn');
-    const mainHeader = document.querySelector('.main-header');
-    const neonTitles = document.querySelectorAll('.neon-title, .section-title, .signature span');
-    const skeletonLoader = document.getElementById('skeleton-loader');
-    const mainContent = document.getElementById('main-content');
-    const currentYearSpan = document.getElementById('currentYear');
+    // العناصر الأساسية
+    const elements = {
+        carouselWrapper: document.getElementById('arc-carousel'),
+        playBioButton: document.getElementById('play-bio'),
+        bioTextElement: document.getElementById('bio-text'),
+        backToTopBtn: document.getElementById('backToTopBtn'),
+        mainHeader: document.querySelector('.main-header'),
+        skeletonLoader: document.getElementById('skeleton-loader'),
+        mainContent: document.getElementById('main-content'),
+        currentYearSpan: document.getElementById('currentYear'),
+        threejsBackground: document.getElementById('threejs-background'),
+    };
 
-    // تحديث سنة الحقوق تلقائيًا
-    if (currentYearSpan) {
-        currentYearSpan.textContent = new Date().getFullYear();
+    // تحديث سنة الحقوق
+    if (elements.currentYearSpan) {
+        elements.currentYearSpan.textContent = new Date().getFullYear();
     }
 
-    // إخفاء الـ Skeleton Loader وإظهار المحتوى بعد التحميل
-    setTimeout(() => {
-        if (skeletonLoader) skeletonLoader.classList.add('hidden');
-        if (mainContent) mainContent.style.display = 'block';
-    }, 1500); // إظهار المحتوى بعد 1.5 ثانية (يمكن تعديل المدة)
+    // إخفاء Skeleton Loader وإظهار المحتوى
+    const showContent = () => {
+        if (elements.skeletonLoader && elements.mainContent) {
+            elements.skeletonLoader.classList.add('hidden');
+            elements.mainContent.style.display = 'block';
+        }
+    };
+    setTimeout(showContent, 1500);
 
-
-    // ----------------------------------------------------
-    // وظيفة تبديل الألوان (الليل/النهار) وتأثير النيون
-    // ----------------------------------------------------
-    function updateColorsBasedOnTime() {
-        const date = new Date();
-        const hour = date.getHours(); // الساعة الحالية (0-23)
-
+    // وظيفة تبديل الثيم
+    const updateTheme = (isManual = false, theme = null) => {
+        const hour = new Date().getHours();
         let accentPrimary, accentPrimaryRgb;
-        if (hour >= 6 && hour < 18) { // النهار (من 6 صباحًا إلى 6 مساءً)
-            accentPrimary = '#00A6ED'; // أزرق
-            accentPrimaryRgb = '0, 166, 237';
-        } else { // الليل (من 6 مساءً إلى 6 صباحًا)
-            accentPrimary = '#8A2BE2'; // بنفسجي
-            accentPrimaryRgb = '138, 43, 226';
+
+        if (isManual && theme) {
+            accentPrimary = theme === 'light' ? '#00A6ED' : '#8A2BE2';
+            accentPrimaryRgb = theme === 'light' ? '0, 166, 237' : '138, 43, 226';
+            document.documentElement.setAttribute('data-theme', theme);
+        } else {
+            accentPrimary = hour >= 6 && hour < 18 ? '#00A6ED' : '#8A2BE2';
+            accentPrimaryRgb = hour >= 6 && hour < 18 ? '0, 166, 237' : '138, 43, 226';
+            document.documentElement.setAttribute('data-theme', hour >= 6 && hour < 18 ? 'light' : 'dark');
         }
 
-        // تحديث متغيرات CSS
         document.documentElement.style.setProperty('--accent-primary', accentPrimary);
         document.documentElement.style.setProperty('--accent-primary-rgb', accentPrimaryRgb);
         document.documentElement.style.setProperty('--neon-glow', `0 0 10px ${accentPrimary}, 0 0 20px ${accentPrimary}`);
         document.documentElement.style.setProperty('--deep-glow', `0 0 15px ${accentPrimary}, 0 0 30px ${accentPrimary}`);
 
-        // Update particle color if Three.js is loaded
-        // This part assumes 'particlesMaterial' is globally accessible or passed
-        // For simplicity, we'll ensure it's updated in the Three.js section itself when material is defined.
-        // Or, call a specific update function for particles if it exists
-        if (window.updateParticleColor && typeof window.updateParticleColor === 'function') {
+        if (window.updateParticleColor) {
             window.updateParticleColor();
         }
-    }
+    };
+    updateTheme();
+    setInterval(updateTheme, 60 * 1000);
 
-    // استدعاء الوظيفة عند تحميل الصفحة وكل دقيقة لتحديث الألوان
-    updateColorsBasedOnTime();
-    setInterval(updateColorsBasedOnTime, 60 * 1000); // تحديث كل دقيقة (60 ثانية * 1000 مللي ثانية)
+    // زر تبديل الثيم
+    const toggleThemeButton = document.createElement('button');
+    toggleThemeButton.textContent = 'تبديل الثيم';
+    toggleThemeButton.className = 'action-button theme-toggle';
+    toggleThemeButton.setAttribute('aria-label', 'تبديل بين الثيم الفاتح والداكن');
+    document.querySelector('.bio-actions').appendChild(toggleThemeButton);
 
+    toggleThemeButton.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        updateTheme(true, currentTheme === 'light' ? 'dark' : 'light');
+    });
 
-    // ----------------------------------------------------
-    // وظيفة Text-to-Speech (تحويل النص إلى كلام)
-    // ----------------------------------------------------
-    if (playBioButton && bioTextElement) {
-        const bioText = bioTextElement.textContent;
-        let speechSynth = window.speechSynthesis;
+    // تحويل النص إلى كلام
+    const setupTextToSpeech = () => {
+        if (!elements.playBioButton || !elements.bioTextElement) return;
+
+        const bioText = elements.bioTextElement.textContent;
+        const speechSynth = window.speechSynthesis;
         let currentUtterance = null;
         let isSpeaking = false;
 
-        if ('speechSynthesis' in window) {
-            playBioButton.addEventListener('click', () => {
-                if (!isSpeaking) {
-                    currentUtterance = new SpeechSynthesisUtterance(bioText);
-                    currentUtterance.lang = 'ar-SA';
-                    currentUtterance.pitch = 1;
-                    currentUtterance.rate = 1;
-
-                    currentUtterance.onstart = () => {
-                        isSpeaking = true;
-                        playBioButton.innerHTML = 'إيقاف السيرة الذاتية <i class="fas fa-pause"></i>';
-                        playBioButton.classList.add('playing');
-                    };
-
-                    currentUtterance.onend = () => {
-                        isSpeaking = false;
-                        playBioButton.innerHTML = 'استمع إلى السيرة الذاتية <i class="fas fa-volume-up"></i>';
-                        playBioButton.classList.remove('playing');
-                    };
-
-                    currentUtterance.onerror = (event) => {
-                        console.error('Speech synthesis error:', event.error);
-                        isSpeaking = false;
-                        playBioButton.innerHTML = 'استمع إلى السيرة الذاتية <i class="fas fa-volume-up"></i>';
-                        playBioButton.classList.remove('playing');
-                        alert('حدث خطأ أثناء تشغيل السيرة الذاتية. قد لا يكون متصفحك يدعم هذه الميزة أو لا يتوفر صوت للغة العربية.');
-                    };
-
-                    speechSynth.speak(currentUtterance);
-                } else {
-                    speechSynth.cancel();
-                }
-            });
-        } else {
-            playBioButton.textContent = 'متصفحك لا يدعم القراءة الصوتية';
-            playBioButton.disabled = true;
-            playBioButton.classList.add('disabled');
+        if (!speechSynth) {
+            elements.playBioButton.textContent = 'متصفحك لا يدعم القراءة الصوتية';
+            elements.playBioButton.disabled = true;
+            elements.playBioButton.classList.add('disabled');
+            return;
         }
-    }
 
-    // ----------------------------------------------------
-    // زر العودة للأعلى (Back To Top Button)
-    // ----------------------------------------------------
-    if (backToTopBtn) {
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 300) {
-                backToTopBtn.style.display = 'block';
+        elements.playBioButton.addEventListener('click', () => {
+            if (!isSpeaking) {
+                currentUtterance = new SpeechSynthesisUtterance(bioText);
+                currentUtterance.lang = 'ar-SA';
+                currentUtterance.pitch = 1;
+                currentUtterance.rate = 1;
+
+                currentUtterance.onstart = () => {
+                    isSpeaking = true;
+                    elements.playBioButton.innerHTML = 'إيقاف السيرة الذاتية <i class="fas fa-pause"></i>';
+                    elements.playBioButton.classList.add('playing');
+                };
+
+                currentUtterance.onend = () => {
+                    isSpeaking = false;
+                    elements.playBioButton.innerHTML = 'استمع إلى السيرة الذاتية <i class="fas fa-volume-up"></i>';
+                    elements.playBioButton.classList.remove('playing');
+                };
+
+                currentUtterance.onerror = (event) => {
+                    console.error('Speech synthesis error:', event.error);
+                    isSpeaking = false;
+                    elements.playBioButton.innerHTML = 'استمع إلى السيرة الذاتية <i class="fas fa-volume-up"></i>';
+                    elements.playBioButton.classList.remove('playing');
+                    alert('حدث خطأ أثناء تشغيل السيرة الذاتية.');
+                };
+
+                speechSynth.speak(currentUtterance);
             } else {
-                backToTopBtn.style.display = 'none';
-            }
-
-            if (mainHeader) {
-                if (window.scrollY > 50) {
-                    mainHeader.classList.add('scrolled');
-                } else {
-                    mainHeader.classList.remove('scrolled');
-                }
+                speechSynth.cancel();
+                isSpeaking = false;
+                elements.playBioButton.innerHTML = 'استمع إلى السيرة الذاتية <i class="fas fa-volume-up"></i>';
+                elements.playBioButton.classList.remove('playing');
             }
         });
+    };
+    setupTextToSpeech();
 
-        backToTopBtn.addEventListener('click', () => {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
+    // زر العودة للأعلى
+    const setupBackToTop = () => {
+        if (!elements.backToTopBtn || !elements.mainHeader) return;
+
+        window.addEventListener('scroll', () => {
+            elements.backToTopBtn.style.display = window.scrollY > 300 ? 'block' : 'none';
+            elements.mainHeader.classList.toggle('scrolled', window.scrollY > 50);
         });
-    }
 
-    // ----------------------------------------------------
-    // تأثير خلفية الجسيمات المتحركة باستخدام Three.js
-    // ----------------------------------------------------
-    const threejsBackground = document.getElementById('threejs-background');
-    if (threejsBackground && typeof THREE !== 'undefined') {
+        elements.backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    };
+    setupBackToTop();
+
+    // خلفية الجسيمات باستخدام Three.js
+    const setupThreeJS = () => {
+        if (!elements.threejsBackground || typeof THREE Certaines === 'undefined') return;
+
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
-        threejsBackground.appendChild(renderer.domElement);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        elements.threejsBackground.appendChild(renderer.domElement);
 
         camera.position.z = 5;
 
         const particlesGeometry = new THREE.BufferGeometry();
-        const particlesCount = 2000;
+        const particlesCount = 1000;
         const posArray = new Float32Array(particlesCount * 3);
 
         for (let i = 0; i < particlesCount * 3; i++) {
@@ -162,13 +162,12 @@ document.addEventListener('DOMContentLoaded', () => {
             size: 0.015,
             transparent: true,
             blending: THREE.AdditiveBlending,
-            color: new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue('--accent-primary').trim())
+            color: new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue('--accent-primary').trim()),
         });
 
         const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
         scene.add(particlesMesh);
 
-        // Function to update particle color based on CSS variable
         window.updateParticleColor = () => {
             if (particlesMaterial) {
                 particlesMaterial.color.set(getComputedStyle(document.documentElement).getPropertyValue('--accent-primary').trim());
@@ -177,7 +176,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const animate = () => {
             requestAnimationFrame(animate);
-
             particlesMesh.rotation.y += 0.0001;
             particlesMesh.rotation.x += 0.00005;
             particlesMesh.position.z -= 0.001;
@@ -195,39 +193,88 @@ document.addEventListener('DOMContentLoaded', () => {
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
-    }
+    };
+    setupThreeJS();
 
-    // ----------------------------------------------------
-    // الكاروسيل الأفقي (Horizontal Carousel)
-    // ----------------------------------------------------
-    if (carouselContainer) {
-        let isDown = false;
-        let startX;
-        let scrollLeft;
+    // الكاروسيل القوسي ثلاثي الأبعاد
+    const setupArcCarousel = () => {
+        if (!elements.carouselWrapper) return;
 
-        carouselContainer.addEventListener('mousedown', (e) => {
-            isDown = true;
-            carouselContainer.classList.add('active');
-            startX = e.pageX - carouselContainer.offsetLeft;
-            scrollLeft = carouselContainer.scrollLeft;
+        const items = elements.carouselWrapper.querySelectorAll('.carousel-item');
+        const totalItems = items.length;
+        const radius = 500;
+        const angleIncrement = (Math.PI / 2) / (totalItems - 1);
+
+        const positionItems = () => {
+            items.forEach((item, index) => {
+                const angle = -Math.PI / 4 + index * angleIncrement;
+                const x = radius * Math.sin(angle);
+                const z = radius * (1 - Math.cos(angle));
+                item.style.transform = `translateX(${x}px) translateZ(${z}px) rotateY(${-angle * (180 / Math.PI)}deg)`;
+            });
+        };
+        positionItems();
+
+        let isDragging = false;
+        let startX, startRotation = 0;
+        const maxRotation = 30;
+
+        const updateRotation = (clientX) => {
+            const rect = elements.carouselWrapper.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const offsetX = (clientX - centerX) / rect.width;
+            const rotation = -offsetX * maxRotation;
+            elements.carouselWrapper.style.transform = `rotateY(${rotation}deg)`;
+        };
+
+        elements.carouselWrapper.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX;
+            startRotation = parseFloat(getComputedStyle(elements.carouselWrapper).transform.split(',')[5]) || 0;
+            elements.carouselWrapper.classList.add('active');
         });
 
-        carouselContainer.addEventListener('mouseleave', () => {
-            isDown = false;
-            carouselContainer.classList.remove('active');
+        elements.carouselWrapper.addEventListener('touchstart', (e) => {
+            isDragging = true;
+            startX = e.touches[0].clientX;
+            startRotation = parseFloat(getComputedStyle(elements.carouselWrapper).transform.split(',')[5]) || 0;
+            elements.carouselWrapper.classList.add('active');
+        }, { passive: true });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            updateRotation(e.clientX);
         });
 
-        carouselContainer.addEventListener('mouseup', () => {
-            isDown = false;
-            carouselContainer.classList.remove('active');
-        });
-
-        carouselContainer.addEventListener('mousemove', (e) => {
-            if (!isDown) return;
+        document.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
             e.preventDefault();
-            const x = e.pageX - carouselContainer.offsetLeft;
-            const walk = (x - startX) * 2;
-            carouselContainer.scrollLeft = scrollLeft - walk;
+            updateRotation(e.touches[0].clientX);
+        }, { passive: false });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+            elements.carouselWrapper.classList.remove('active');
         });
-    }
+
+        document.addEventListener('touchend', () => {
+            isDragging = false;
+            elements.carouselWrapper.classList.remove('active');
+        });
+
+        items.forEach((item) => {
+            item.addEventListener('mouseenter', () => {
+                item.style.transition = 'transform 0.4s ease, box-shadow 0.4s ease';
+            });
+            item.addEventListener('mouseleave', () => {
+                const angle = -Math.PI / 4 + item.dataset.index * angleIncrement;
+                const x = radius * Math.sin(angle);
+                const z = radius * (1 - Math.cos(angle));
+                item.style.transform = `translateX(${x}px) translateZ(${z}px) rotateY(${-angle * (180 / Math.PI)}deg)`;
+            });
+        });
+
+        window.addEventListener('resize', positionItems);
+    };
+    setupArcCarousel();
 });
