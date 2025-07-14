@@ -11,94 +11,78 @@
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
     <link rel="icon" type="image/png" href="assets/images/favicon.png" loading="lazy">
-    <link rel="manifest" href="/manifest.json">
     <script async src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r165/three.min.js" integrity="sha512-xyz12345" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 <body>
-    <div id="skeleton-loader" class="skeleton-loader" role="status" aria-live="polite">
-        <div class="skeleton-header"></div>
-        <div class="skeleton-carousel">
-            <div class="skeleton-item"></div>
-            <div class="skeleton-item"></div>
-            <div class="skeleton-item"></div>
-        </div>
-        <div class="skeleton-bio">
-            <div class="skeleton-line short"></div>
-            <div class="skeleton-line long"></div>
-            <div class="skeleton-line medium"></div>
-        </div>
-    </div>
-
-    <div id="threejs-background" class="threejs-background" aria-hidden="true"></div>
-
-    <div id="main-content" style="display: none;">
-        <header class="main-header" role="banner">
-            <h1 class="neon-title">Atomic</h1>
-            <p class="tagline">بوابتك إلى العالم الرقمي الغامر</p>
-        </header>
-
-        <main class="content-wrapper">
-            <section class="slider-section" aria-labelledby="social-links-title">
-                <h2 id="social-links-title" class="section-title neon-text">تواصل معي</h2>
-                <div class="carousel-container" role="region" aria-label="روابط التواصل الاجتماعي">
-                    <div class="carousel-wrapper" id="arc-carousel">
-                        <a href="https://www.facebook.com/hicham.chamadi" target="_blank" rel="noopener noreferrer" class="carousel-item" data-index="0" aria-label="متابعة Atomic على فيسبوك">
-                            <div class="icon-circle facebook"><i class="fab fa-facebook-f"></i></div>
-                            <p>فيسبوك</p>
-                        </a>
-                        <a href="https://www.instagram.com/hicham_chamadi/" target="_blank" rel="noopener noreferrer" class="carousel-item" data-index="1" aria-label="متابعة Atomic على إنستغرام">
-                            <div class="icon-circle instagram"><i class="fab fa-instagram"></i></div>
-                            <p>إنستغرام</p>
-                        </a>
-                        <a href="https://www.youtube.com/@atomic996" target="_blank" rel="noopener noreferrer" class="carousel-item" data-index="2" aria-label="متابعة Atomic على يوتيوب">
-                            <div class="icon-circle youtube"><i class="fab fa-youtube"></i></div>
-                            <p>يوتيوب</p>
-                        </a>
-                        <a href="https://www.tiktok.com/@hichamchamadi" target="_blank" rel="noopener noreferrer" class="carousel-item" data-index="3" aria-label="متابعة Atomic على تيك توك">
-                            <div class="icon-circle tiktok"><i class="fab fa-tiktok"></i></div>
-                            <p>تيك توك</p>
-                        </a>
-                        <a href="https://www.behance.net/hichamchamadi" target="_blank" rel="noopener noreferrer" class="carousel-item" data-index="4" aria-label="متابعة Atomic على بيهانس">
-                            <div class="icon-circle behance"><i class="fab fa-behance"></i></div>
-                            <p>بيهانس</p>
-                        </a>
-                        <a href="https://dribbble.com/Atomic_design" target="_blank" rel="noopener noreferrer" class="carousel-item" data-index="5" aria-label="متابعة Atomic على دريببل">
-                            <div class="icon-circle dribbble"><i class="fab fa-dribbble"></i></div>
-                            <p>دريببل</p>
-                        </a>
-                    </div>
+    <div id="threejs-background" class="threejs-background"></div>
+    <header class="main-header">
+        <h1 class="neon-title">Atomic</h1>
+        <p class="tagline">بوابتك إلى العالم الرقمي الغامر</p>
+    </header>
+    <main class="content-wrapper">
+        <section class="slider-section" aria-labelledby="social-links-title">
+            <h2 id="social-links-title" class="section-title neon-text">تواصل معي</h2>
+            <div class="carousel-container" role="region" aria-label="روابط التواصل الاجتماعي">
+                <div class="carousel-wrapper" id="arc-carousel">
+                    <a href="https://www.facebook.com/hicham.chamadi" target="_blank" rel="noopener noreferrer" class="carousel-item" data-index="0" aria-label="متابعة Atomic على فيسبوك">
+                        <div class="icon-circle facebook"><i class="fab fa-facebook-f"></i></div>
+                        <p>فيسبوك</p>
+                    </a>
+                    <a href="https://www.instagram.com/hicham_chamadi/" target="_blank" rel="noopener noreferrer" class="carousel-item" data-index="1" aria-label="متابعة Atomic على إنستغرام">
+                        <div class="icon-circle instagram"><i class="fab fa-instagram"></i></div>
+                        <p>إنستغرام</p>
+                    </a>
+                    <a href="https://www.youtube.com/@atomic996" target="_blank" rel="noopener noreferrer" class="carousel-item" data-index="2" aria-label="متابعة Atomic على يوتيوب">
+                        <div class="icon-circle youtube"><i class="fab fa-youtube"></i></div>
+                        <p>يوتيوب</p>
+                    </a>
+                    <a href="https://www.tiktok.com/@hichamchamadi" target="_blank" rel="noopener noreferrer" class="carousel-item" data-index="3" aria-label="متابعة Atomic على تيك توك">
+                        <div class="icon-circle tiktok"><i class="fab fa-tiktok"></i></div>
+                        <p>تيك توك</p>
+                    </a>
+                    <a href="https://www.behance.net/hichamchamadi" target="_blank" rel="noopener noreferrer" class="carousel-item" data-index="4" aria-label="متابعة Atomic على بيهانس">
+                        <div class="icon-circle behance"><i class="fab fa-behance"></i></div>
+                        <p>بيهانس</p>
+                    </a>
+                    <a href="https://dribbble.com/Atomic_design" target="_blank" rel="noopener noreferrer" class="carousel-item" data-index="5" aria-label="متابعة Atomic على دريببل">
+                        <div class="icon-circle dribbble"><i class="fab fa-dribbble"></i></div>
+                        <p>دريببل</p>
+                    </a>
                 </div>
-            </section>
-
-            <section class="about-section" id="about" aria-labelledby="about-title">
-                <h2 id="about-title" class="section-title neon-text">من أنا؟</h2>
-                <div class="bio-content">
-                    <p id="bio-text">مرحباً بك في عالمي الرقمي! أنا Atomic، مصمم تجارب تفاعلية.</p>
-                    <p>أخصص وقتي لإنشاء محتوى إبداعي في مجال التكنولوجيا والتصميم.</p>
-                    <p>أستمتع باستكشاف كل ما هو جديد في التكنولوجيا والتصميم، وأسعى دائمًا لتقديم محتوى فريد ومُلهم.</p>
-                    <p>لا تتردد في التواصل معي ومتابعة رحلتي!</p>
-                </div>
-                <div class="bio-actions">
-                    <div class="bio-avatar" id="3d-avatar" aria-hidden="true"></div>
-                    <button id="play-bio" class="action-button" aria-label="تشغيل أو إيقاف السيرة الذاتية الصوتية">
-                        استمع إلى السيرة الذاتية <i class="fas fa-volume-up"></i>
-                    </button>
-                </div>
-                <div class="signature">
-                    <span>Atomic</span>
-                    <div class="signature-line"></div>
-                </div>
-            </section>
-        </main>
-
-        <footer class="main-footer" role="contentinfo">
-            <p>© <span id="currentYear"></span> Atomic. جميع الحقوق محفوظة.</p>
-            <div class="social-links">
-                <a href="https://wa.me/+1234567890" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="تواصل عبر واتساب"><i class="fab fa-whatsapp"></i></a>
-                <a href="https://www.linkedin.com/in/hichamchamadi" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="متابعة على لينكدإن"><i class="fab fa-linkedin"></i></a>
-                <a href="https://github.com/Atomic996" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="متابعة على جيت هب"><i class="fab fa-github"></i></a>
-                <a href="mailto:contact@atomic996.com" class="social-icon" aria-label="إرسال بريد إلكتروني"><i class="fas fa-envelope"></i></a>
             </div>
-        </footer>
-
-        <button id="backToTopBtn" title="العودة إلى الأعلى" aria-label="الع
+        </section>
+        <section class="about-section" id="about" aria-labelledby="about-title">
+            <h2 id="about-title" class="section-title neon-text">من أنا؟</h2>
+            <div class="bio-content">
+                <p id="bio-text">مرحباً بك في عالمي الرقمي! أنا Atomic، مصمم تجارب تفاعلية.</p>
+                <p>أخصص وقتي لإنشاء محتوى إبداعي في مجال التكنولوجيا والتصميم.</p>
+                <p>أستمتع باستكشاف كل ما هو جديد في التكنولوجيا والتصميم، وأسعى دائمًا لتقديم محتوى فريد ومُلهم.</p>
+                <p>لا تتردد في التواصل معي ومتابعة رحلتي!</p>
+            </div>
+            <div class="bio-actions">
+                <div class="bio-avatar" id="3d-avatar"></div>
+                <button id="play-bio" class="action-button" aria-label="تشغيل أو إيقاف السيرة الذاتية الصوتية">
+                    استمع إلى السيرة الذاتية <i class="fas fa-volume-up"></i>
+                </button>
+            </div>
+            <div class="signature">
+                <span>Atomic</span>
+                <div class="signature-line"></div>
+            </div>
+        </section>
+    </main>
+    <footer class="main-footer">
+        <p>© <span id="currentYear"></span> Atomic. جميع الحقوق محفوظة.</p>
+        <div class="social-links">
+            <a href="https://wa.me/+1234567890" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="تواصل عبر واتساب"><i class="fab fa-whatsapp"></i></a>
+            <a href="https://www.linkedin.com/in/hichamchamadi" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="متابعة على لينكدإن"><i class="fab fa-linkedin"></i></a>
+            <a href="https://github.com/Atomic996" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="متابعة على جيت هب"><i class="fab fa-github"></i></a>
+            <a href="mailto:contact@atomic996.com" class="social-icon" aria-label="إرسال بريد إلكتروني"><i class="fas fa-envelope"></i></a>
+        </div>
+    </footer>
+    <button id="backToTopBtn" title="العودة إلى الأعلى" aria-label="العودة إلى أعلى الصفحة">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+    <script src="assets/js/script.js" defer></script>
+</body>
+                        </html>
