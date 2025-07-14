@@ -25,8 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         carouselItems.forEach((item, i) => {
             const currentAngle = startAngle + (i * angleStep);
-            // استخدام gsap.utils.degToRad لتحويل الدرجات إلى راديان
-            const radAngle = gsap.utils.degToRad(currentAngle);
+            // استخدام gsap.utils.degToRad لتحويل الدرجات إلى 
+            const radAngle = currentAngle * (Math.PI / 180); // تحويل الدرجات إلى راديان يدوياً
 
             gsap.set(item, {
                 x: Math.sin(radAngle) * radius,
