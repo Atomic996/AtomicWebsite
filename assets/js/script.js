@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const items = elements.carouselWrapper.querySelectorAll('.carousel-item');
         const totalItems = items.length;
-        const radius = 300; // تقليل النصف قطر لتجنب التداخل
+        const radius = 600; // تقليل النصف قطر لتجنب التداخل
         const angleIncrement = (2 * Math.PI) / totalItems; // 360 درجة مقسمة بالتساوي
 
         const positionItems = () => {
