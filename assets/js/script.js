@@ -9,10 +9,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const carouselDotsContainer = document.querySelector('.carousel-dots');
 
     const numItems = carouselItems.length;
-    // تم تعديل قيمة radius لجعل العناصر أقرب وأكثر وضوحًا
-    const radius = 300; // تم تقليله من 650
+    // --- قيم تم تعديلها ---
+    const radius = 250; // تم تقليله من 300 لجعل العناصر أقرب وأكثر تباعدًا في العرض الأمامي
     const arcAngle = 120; // زاوية القوس - تم الاحتفاظ بها
-    const itemRotationOffset = 0; // تم تعديله إلى 0 لجعل الدوران طبيعيًا أكثر مع المحور
+    const itemRotationOffset = 0; // تم تعديله إلى 0 لضمان دوران طبيعي حول المحور
+    // --- نهاية القيم المعدلة ---
     const maxRotationSensitivity = 40;
     let currentItemIndex = 0; // العنصر النشط حاليا
 
@@ -26,12 +27,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             gsap.set(item, {
                 x: Math.sin(radAngle) * radius,
-                y: Math.cos(radAngle) * radius - radius, // هذا يجعل العناصر في قوس
-                z: Math.cos(radAngle) * -radius, // يجعل العناصر الأقرب إلى المنتصف أبعد
+                y: Math.cos(radAngle) * radius - radius,
+                z: Math.cos(radAngle) * -radius,
                 rotationY: currentAngle + itemRotationOffset,
-                // تعديل بسيط على الشفافية والحجم لتبدو العناصر في الخلفية أقل وضوحًا
-                scale: 1 - (Math.abs(currentAngle) / (arcAngle / 2)) * 0.4, // زيادة تأثير التكبير/التصغير
-                opacity: 1 - (Math.abs(currentAngle) / (arcAngle / 2)) * 0.5, // زيادة تأثير الشفافية
+                // --- قيم تم تعديلها ---
+                scale: 1 - (Math.abs(currentAngle) / (arcAngle / 2)) * 0.5, // زيادة تأثير التكبير/التصغير (كان 0.4)
+                opacity: 1 - (Math.abs(currentAngle) / (arcAngle / 2)) * 0.7, // زيادة تأثير الشفافية (كان 0.5)
+                // --- نهاية القيم المعدلة ---
                 transformOrigin: "center center",
                 pointerEvents: "auto",
                 zIndex: Math.round(100 - Math.abs(currentAngle))
@@ -60,20 +62,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // حساب الزاوية المستهدفة لتدوير الكاروسيل
         const targetAngle = -((arcAngle / (numItems - 1)) * currentItemIndex - (arcAngle / 2));
-        const rotationAmount = targetAngle; // تم تبسيط هذا
+        const rotationAmount = targetAngle;
         
         gsap.to(carouselWrapper, {
             rotationY: rotationAmount,
-            duration: 1, // تم زيادة المدة لجعل الانتقال أبطأ وأكثر سلاسة
+            duration: 1.2, // تم زيادة المدة لجعل الانتقال أبطأ وأكثر سلاسة (كان 1)
             ease: "power3.out",
             onUpdate: () => {
                 carouselItems.forEach((item, i) => {
                     const currentRotationY = parseFloat(gsap.get(carouselWrapper, 'rotationY'));
-                    const itemAngle = (arcAngle / (numItems - 1)) * i + (-arcAngle / 2) - currentRotationY; // استخدمنا -currentRotationY لتعويض دوران الـ wrapper
+                    const itemAngle = (arcAngle / (numItems - 1)) * i + (-arcAngle / 2) - currentRotationY;
 
                     gsap.to(item, {
-                        scale: 1 - (Math.abs(itemAngle) / (arcAngle / 2)) * 0.4,
-                        opacity: 1 - (Math.abs(itemAngle) / (arcAngle / 2)) * 0.5,
+                        // --- قيم تم تعديلها ---
+                        scale: 1 - (Math.abs(itemAngle) / (arcAngle / 2)) * 0.5, // مطابقة لتعديل الـ scale في setupCarouselItems
+                        opacity: 1 - (Math.abs(itemAngle) / (arcAngle / 2)) * 0.7, // مطابقة لتعديل الـ opacity في setupCarouselItems
+                        // --- نهاية القيم المعدلة ---
                         duration: 0.3
                     });
                 });
@@ -121,8 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     carouselContainer.addEventListener('mouseleave', () => {
-        // العودة إلى العنصر الحالي عند مغادرة الماوس
-        goToItem(currentItemIndex);
+        goToItem(currentItemIndex); // العودة إلى العنصر الحالي عند مغادرة الماوس
     });
 
     // أحداث اللمس
