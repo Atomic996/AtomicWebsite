@@ -1,31 +1,26 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // تسجيل إضافات GSAP
     gsap.registerPlugin(MotionPathPlugin);
 
-    // عناصر الكاروسيل
     const carouselContainer = document.querySelector('.carousel-container');
     const carouselWrapper = document.querySelector('.carousel-wrapper');
     const carouselItems = gsap.utils.toArray('.carousel-item');
     const prevBtn = document.querySelector('.carousel-nav.prev');
     const nextBtn = document.querySelector('.carousel-nav.next');
-    const carouselDotsContainer = document.querySelector('.carousel-dots'); // تأكد من وجود هذا العنصر في HTML
+    const carouselDotsContainer = document.querySelector('.carousel-dots');
 
-    // إعدادات الكاروسيل
     const numItems = carouselItems.length;
-    const radius = 850; // تم تعديل هذا الرقم لعمق أفضل
+    const radius = 650; // تم تعديل هذا الرقم لعمق أفضل
     const arcAngle = 120; // تم تعديل هذا الرقم لزاوية أوسع
     const itemRotationOffset = 10;
-    const maxRotationSensitivity = 40; // حساسية دوران الكاروسيل بالماوس
-    let currentItemIndex = 0; // العنصر النشط حالياً
+    const maxRotationSensitivity = 40;
+    let currentItemIndex = 0; // العنصر النشط حاليا
 
-    // تهيئة مواقع العناصر
     function setupCarouselItems() {
         const angleStep = arcAngle / (numItems - 1);
         const startAngle = -arcAngle / 2;
 
         carouselItems.forEach((item, i) => {
             const currentAngle = startAngle + (i * angleStep);
-            // استخدام gsap.utils.degToRad لتحويل الدرجات إلى 
             const radAngle = currentAngle * (Math.PI / 180); // تحويل الدرجات إلى راديان يدوياً
 
             gsap.set(item, {
@@ -40,11 +35,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 zIndex: Math.round(100 - Math.abs(currentAngle))
             });
         });
-        createCarouselDots(); // إنشاء النقاط عند تهيئة الكاروسيل
-        updateDots(); // تحديث النقاط بعد التهيئة
     }
 
-    // تحديث دوران الكاروسيل بناءً على حركة الماوس/اللمس
+    // تحديث دوران الكاروسيل
     function updateCarouselRotation(normalizedX) {
         gsap.to(carouselWrapper, {
             rotationY: normalizedX * maxRotationSensitivity,
@@ -53,52 +46,46 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // الانتقال إلى عنصر محدد في الكاروسيل
+    // دالة للانتقال إلى عنصر معين
     function goToItem(index) {
-        let targetIndex = index;
-        if (targetIndex < 0) {
-            targetIndex = numItems - 1;
-        } else if (targetIndex >= numItems) {
-            targetIndex = 0;
+        if (index < 0) {
+            currentItemIndex = numItems - 1;
+        } else if (index >= numItems) {
+            currentItemIndex = 0;
+        } else {
+            currentItemIndex = index;
         }
-        currentItemIndex = targetIndex;
 
-        const angleStep = arcAngle / (numItems - 1);
-        const targetAngle = (-arcAngle / 2) + (currentItemIndex * angleStep);
+        const targetAngle = -((arcAngle / (numItems - 1)) * currentItemIndex - (arcAngle / 2));
+        const rotationAmount = targetAngle + (numItems % 2 === 0 ? arcAngle / (numItems * 2) : 0); // تعديل بسيط للعناصر الزوجية
 
         gsap.to(carouselWrapper, {
-            rotationY: -targetAngle, // يدور الغلاف ليكون العنصر المستهدف في المنتصف
+            rotationY: rotationAmount,
             duration: 0.8,
-            ease: "power3.out"
+            ease: "power3.out",
+            onUpdate: () => {
+                carouselItems.forEach((item, i) => {
+                    const currentRotationY = parseFloat(gsap.get(carouselWrapper, 'rotationY'));
+                    const itemAngle = (arcAngle / (numItems - 1)) * i + (-arcAngle / 2) + currentRotationY;
+                    const normalizedAngle = itemAngle % 360; // Keep angle within 0-360 for consistent scale/opacity
+
+                    gsap.to(item, {
+                        scale: 1 - (Math.abs(normalizedAngle) / (arcAngle / 2)) * 0.3,
+                        opacity: 1 - (Math.abs(normalizedAngle) / (arcAngle / 2)) * 0.4,
+                        duration: 0.3
+                    });
+                });
+            }
         });
-
-        updateDots(); // تحديث حالة النقاط
-        updateItemVisibility(); // تحديث رؤية العناصر بناءً على العنصر النشط
-    }
-
-    // تحديث رؤية العناصر (مثل زيادة التعتيم للعنصر النشط)
-    function updateItemVisibility() {
-        carouselItems.forEach((item, i) => {
-            const distance = Math.abs(i - currentItemIndex);
-            const opacity = 1 - (distance * 0.3); // تقليل التعتيم للعناصر البعيدة
-            const scale = 1 - (distance * 0.1); // تقليل الحجم للعناصر البعيدة
-
-            gsap.to(item, {
-                opacity: opacity,
-                scale: scale,
-                duration: 0.4,
-                ease: "power2.out"
-            });
-        });
+        updateDots();
     }
 
     // إنشاء نقاط التنقل
     function createCarouselDots() {
-        if (!carouselDotsContainer) return; // تأكد من وجود العنصر
-        carouselDotsContainer.innerHTML = ''; // مسح أي نقاط موجودة
+        carouselDotsContainer.innerHTML = '';
         for (let i = 0; i < numItems; i++) {
             const dot = document.createElement('span');
-            dot.classList.add('carousel-dot'); // استخدام carousel-dot بدلاً من dot
+            dot.classList.add('carousel-dot');
             if (i === currentItemIndex) {
                 dot.classList.add('active');
             }
@@ -109,9 +96,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // تحديث حالة النقاط
     function updateDots() {
-        if (!carouselDotsContainer) return; // تأكد من وجود العنصر
-        document.querySelectorAll('.carousel-dots .carousel-dot').forEach((dot, i) => {
-            if (i === currentItemIndex) {
+        document.querySelectorAll('.carousel-dot').forEach((dot, index) => {
+            if (index === currentItemIndex) {
                 dot.classList.add('active');
             } else {
                 dot.classList.remove('active');
@@ -121,78 +107,72 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // تهيئة الكاروسيل عند التحميل
     setupCarouselItems();
+    createCarouselDots();
     goToItem(0); // ابدأ بالعنصر الأول
 
-    // أحداث الماوس للتحكم في الكاروسيل
+    // أحداث الماوس
     carouselContainer.addEventListener('mousemove', (e) => {
         const rect = carouselContainer.getBoundingClientRect();
         const mouseX = e.clientX - rect.left;
-        const normalizedX = (mouseX / rect.width) * 2 - 1; // تحويل إلى نطاق -1 إلى 1
+        const normalizedX = (mouseX / rect.width) * 2 - 1;
         updateCarouselRotation(normalizedX);
     });
 
     carouselContainer.addEventListener('mouseleave', () => {
-        // إعادة الكاروسيل إلى وضعه الأصلي بعد مغادرة الماوس
-        gsap.to(carouselWrapper, {
-            rotationY: 0,
-            duration: 0.8,
-            ease: "elastic.out(1, 0.7)"
-        });
+        goToItem(currentItemIndex); // ارجع إلى العنصر الحالي عند مغادرة الماوس
     });
 
-    // أحداث اللمس للتحكم في الكاروسيل
+    // أحداث اللمس
+    let touchStartX = 0;
+    carouselContainer.addEventListener('touchstart', (e) => {
+        touchStartX = e.touches[0].clientX;
+    });
+
     carouselContainer.addEventListener('touchmove', (e) => {
-        e.preventDefault(); // منع التمرير الافتراضي
+        e.preventDefault();
         const rect = carouselContainer.getBoundingClientRect();
         const touchX = e.touches[0].clientX - rect.left;
         const normalizedX = (touchX / rect.width) * 2 - 1;
         updateCarouselRotation(normalizedX);
     });
 
-    carouselContainer.addEventListener('touchend', () => {
-        gsap.to(carouselWrapper, {
-            rotationY: 0,
-            duration: 0.8,
-            ease: "elastic.out(1, 0.7)"
-        });
+    carouselContainer.addEventListener('touchend', (e) => {
+        const touchEndX = e.changedTouches[0].clientX;
+        const swipeDistance = touchEndX - touchStartX;
+
+        if (swipeDistance > 50) { // Swipe right
+            goToItem(currentItemIndex - 1);
+        } else if (swipeDistance < -50) { // Swipe left
+            goToItem(currentItemIndex + 1);
+        } else {
+            goToItem(currentItemIndex); // ارجع إلى العنصر الحالي
+        }
     });
 
-    // أحداث النقر على أزرار التنقل (يجب إضافة الأزرار في HTML)
-    if (prevBtn) prevBtn.addEventListener('click', () => goToItem(currentItemIndex - 1));
-    if (nextBtn) nextBtn.addEventListener('click', () => goToItem(currentItemIndex + 1));
-
-    // تحديث سنة حقوق الطبع والنشر في الفوتر
-    document.getElementById('currentYear').textContent = new Date().getFullYear();
-
-    // وظيفة زر العودة للأعلى
-    const backToTopBtn = document.getElementById('backToTopBtn');
-
-    if (backToTopBtn) {
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 300) { // أظهر الزر بعد التمرير 300 بكسل
-                backToTopBtn.style.display = 'block';
-            } else {
-                backToTopBtn.style.display = 'none';
-            }
-        });
-
-        backToTopBtn.addEventListener('click', () => {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth' // للتمرير الناعم
-            });
+    // أحداث أزرار التنقل
+    if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+            goToItem(currentItemIndex - 1);
         });
     }
 
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+            goToItem(currentItemIndex + 1);
+        });
+    }
 
-    // تأثيرات الرسوم المتحركة الأولية
+    // تحديث سنة الحقوق
+    document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+    // تأثيرات إضافية (إذا كانت تسبب مشاكل، يمكن إزالتها مؤقتًا)
     gsap.from('.carousel-item', {
         opacity: 0,
         y: 50,
         stagger: 0.2,
         duration: 1,
         ease: "power3.out",
-        delay: 0.5 // تأخير لبدء الرسوم المتحركة بعد تحميل الصفحة
+        delay: 0.5
     });
 
     gsap.from('.section-title', {
