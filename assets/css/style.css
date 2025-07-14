@@ -84,7 +84,7 @@ body {
     text-shadow: var(--neon-glow);
 }
 
-/* الكاروسيل القوسي ثلاثي الأبعاد */
+/* الكاروسيل الدائري ثلاثي الأبعاد */
 .carousel-container {
     width: 100%;
     padding: 40px 0;
@@ -178,12 +178,10 @@ body {
     transform: scale(1.1);
 }
 
+.icon-circle.twitter { background-color: #1DA1F2; border-color: #1DA1F2; }
+.icon-circle.telegram { background-color: #0088cc; border-color: #0088cc; }
 .icon-circle.facebook { background-color: #3b5998; border-color: #3b5998; }
 .icon-circle.instagram { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%); border-color: #d6249f; }
-.icon-circle.youtube { background-color: #ff0000; border-color: #ff0000; }
-.icon-circle.tiktok { background-color: #69C9D0; border-color: #69C9D0; }
-.icon-circle.behance { background-color: #053eff; border-color: #053eff; }
-.icon-circle.dribbble { background-color: #ea4c89; border-color: #ea4c89; }
 
 .carousel-item p {
     font-size: 1.3rem;
