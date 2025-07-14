@@ -5,12 +5,22 @@
     --accent-blue: #00A6ED;
     --accent-purple: #8A2BE2;
     --text-light: #E0E0E0;
-    /* Neon Glow values will be set dynamically by JS */
     --neon-glow: 0 0 10px var(--accent-primary), 0 0 20px var(--accent-primary);
     --deep-glow: 0 0 15px var(--accent-primary), 0 0 30px var(--accent-primary);
-    --accent-primary: var(--accent-blue); /* Default, overridden by JS for day/night */
-    --accent-primary-rgb: 0, 166, 237; /* Default RGB, overridden by JS */
-    --font-base: 'Cairo', system-ui, sans-serif; /* Basic Arabic font */
+    --accent-primary: var(--accent-blue);
+    --accent-primary-rgb: 0, 166, 237;
+    --font-base: 'Cairo', system-ui, sans-serif;
+    --transition-base: 0.3s ease;
+  }
+
+  [data-theme="dark"] {
+    --accent-primary: var(--accent-purple);
+    --accent-primary-rgb: 138, 43, 226;
+  }
+
+  [data-theme="light"] {
+    --accent-primary: var(--accent-blue);
+    --accent-primary-rgb: 0, 166, 237;
   }
 }
 
@@ -23,28 +33,28 @@
 
 body {
     font-family: var(--font-base);
-    background-color: var(--bg-dark); /* Base background color, Three.js will overlay */
+    background-color: var(--bg-dark);
     color: var(--text-light);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    overflow-x: hidden; /* Prevents horizontal scrollbar */
+    overflow-x: hidden;
     position: relative;
     line-height: 1.8;
 }
 
-/* Three.js Background Container */
+/* خلفية Three.js */
 .threejs-background {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    z-index: -1; /* Puts it behind other content */
-    pointer-events: none; /* Allows interaction with elements beneath it */
+    z-index: -1;
+    pointer-events: none;
 }
 
-/* Skeleton Loader Styles */
+/* Skeleton Loader */
 .skeleton-loader {
     position: fixed;
     top: 0;
@@ -57,7 +67,7 @@ body {
     align-items: center;
     justify-content: center;
     z-index: 1000;
-    transition: opacity 0.5s ease-out;
+    transition: opacity 0.5s var(--transition-base);
 }
 
 .skeleton-loader.hidden {
@@ -75,41 +85,14 @@ body {
     position: relative;
 }
 
-.skeleton-header {
-    width: 80%;
-    max-width: 400px;
-    height: 100px;
-}
-
-.skeleton-carousel {
-    width: 90%;
-    max-width: 1000px;
-    height: 250px;
-    display: flex;
-    gap: 20px;
-    padding: 20px;
-}
-
-.skeleton-item {
-    flex-shrink: 0;
-    width: 180px;
-    height: 100%;
-    background-color: rgba(255, 255, 255, 0.08);
-    border-radius: 8px;
-}
-
-.skeleton-line {
-    height: 15px;
-    background-color: rgba(255, 255, 255, 0.08);
-    margin-bottom: 10px;
-    border-radius: 4px;
-}
-
+.skeleton-header { width: 80%; max-width: 400px; height: 100px; }
+.skeleton-carousel { width: 90%; max-width: 1000px; height: 250px; display: flex; gap: 20px; padding: 20px; }
+.skeleton-item { flex-shrink: 0; width: 180px; height: 100%; background-color: rgba(255, 255, 255, 0.08); border-radius: 8px; }
+.skeleton-line { height: 15px; background-color: rgba(255, 255, 255, 0.08); margin-bottom: 10px; border-radius: 4px; }
 .skeleton-line.short { width: 60%; }
 .skeleton-line.medium { width: 85%; }
 .skeleton-line.long { width: 100%; }
 
-/* Animation for skeleton loader */
 .skeleton-header::after,
 .skeleton-carousel::after,
 .skeleton-bio::after,
@@ -130,32 +113,29 @@ body {
     100% { transform: translateX(100%); }
 }
 
-
 /* الرأس */
 .main-header {
     text-align: center;
     padding: 50px 20px;
     position: relative;
     z-index: 10;
-    transition: all 0.3s ease;
+    transition: all var(--transition-base);
 }
 
-/* العنوان الرئيسي */
 .neon-title {
     font-size: clamp(2rem, 5vw, 4.5rem);
     color: var(--text-light);
     text-shadow: var(--neon-glow);
     letter-spacing: 5px;
     margin-bottom: 10px;
-    transition: text-shadow 0.5s ease;
+    transition: text-shadow var(--transition-base);
 }
 
-/* الشعار الفرعي */
 .tagline {
     font-size: 1.5rem;
     color: var(--text-light);
     opacity: 0.8;
-    transition: opacity 0.3s ease;
+    transition: opacity var(--transition-base);
 }
 
 /* المحتوى الرئيسي */
@@ -168,56 +148,50 @@ body {
     z-index: 10;
 }
 
-/* العناوين الفرعية للأقسام */
 .section-title {
     font-size: 3rem;
     text-align: center;
     margin-bottom: 60px;
     color: var(--text-light);
     text-shadow: var(--neon-glow);
-    transition: text-shadow 0.5s ease;
+    transition: text-shadow var(--transition-base);
 }
 
-.neon-text {
-    color: var(--text-light);
-    text-shadow: var(--neon-glow);
-}
-
-/* الكاروسيل */
+/* الكاروسيل القوسي */
 .carousel-container {
     width: 100%;
-    overflow-x: scroll; /* Enable horizontal scrolling */
-    scroll-snap-type: x mandatory; /* Snap to items */
-    overscroll-behavior-x: contain;
-    -webkit-overflow-scrolling: touch;
-    padding: 20px 0;
-    display: flex; /* Arrange items horizontally */
-    gap: 20px; /* Space between items */
-    scroll-behavior: smooth;
+    padding: 40px 0;
+    display: flex;
+    justify-content: center;
     position: relative;
-    container-type: inline-size; /* For @container queries */
+    perspective: 1200px;
+    container-type: inline-size;
     container-name: carousel-section;
-}
-
-/* Hide scrollbar for webkit browsers */
-.carousel-container::-webkit-scrollbar {
-    display: none;
-}
-/* Hide scrollbar for Firefox */
-.carousel-container {
+    overflow: visible;
+    -ms-overflow-style: none;
     scrollbar-width: none;
 }
 
+.carousel-container::-webkit-scrollbar { display: none; }
 
-/* عناصر الكاروسيل */
+.carousel-wrapper {
+    position: relative;
+    transform-style: preserve-3d;
+    width: 100%;
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.5s ease;
+}
+
 .carousel-item {
-    flex-shrink: 0; /* Prevent items from shrinking */
-    width: 200px; /* Default width */
-    aspect-ratio: 1/1.5; /* Aspect ratio for height */
-    scroll-snap-align: center; /* Snap to center */
-    background-color: rgba(0, 0, 0, 0.4);
+    position: absolute;
+    width: 180px;
+    aspect-ratio: 1/1.5;
+    background-color: rgba(0, 0, 0, 0.5);
     border: 2px solid var(--accent-primary);
-    border-radius: 10px;
+    border-radius: 12px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -226,16 +200,18 @@ body {
     text-align: center;
     text-decoration: none;
     color: var(--text-light);
-    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.5s ease, box-shadow 0.5s ease;
-    position: relative;
-    overflow: hidden;
-    cursor: grab; /* Indicates draggable */
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.4s ease, scale 0.4s ease;
+    transform-style: preserve-3d;
+    cursor: pointer;
+    user-select: none;
+    will-change: transform, box-shadow;
 }
 
-.carousel-item:active {
-    cursor: grabbing;
+.carousel-item:hover {
+    transform: scale(1.1) translateZ(50px);
+    box-shadow: 0 0 20px rgba(var(--accent-primary-rgb), 0.7);
+    z-index: 10;
 }
-
 
 .carousel-item::before {
     content: '';
@@ -244,51 +220,43 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: radial-gradient(circle at center, rgba(var(--accent-primary-rgb), 0.2) 0%, transparent 60%);
+    background: radial-gradient(circle at center, rgba(var(--accent-primary-rgb), 0.3) 0%, transparent 60%);
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.4s ease;
     z-index: 0;
 }
 
-.carousel-item:hover {
-    transform: scale(1.05) translateY(-5px);
-    box-shadow: 0 0 15px var(--accent-primary);
-}
-
-.carousel-item:hover::before {
-    opacity: 1;
-}
+.carousel-item:hover::before { opacity: 1; }
 
 .carousel-item .icon-circle {
-    width: 90px;
-    height: 90px;
-    border: 4px solid var(--accent-primary);
+    width: 80px;
+    height: 80px;
+    border: 3px solid var(--accent-primary);
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
     margin-bottom: 15px;
-    font-size: 2.5rem;
-    background-color: rgba(0, 0, 0, 0.6);
-    box-shadow: 0 0 10px rgba(var(--accent-primary-rgb), 0.5);
-    transition: border-color 0.5s ease, box-shadow 0.5s ease;
-    position: relative;
-    z-index: 1;
+    font-size: 2.2rem;
+    background-color: rgba(0, 0, 0, 0.7);
+    box-shadow: 0 0 12px rgba(var(--accent-primary-rgb), 0.6);
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
 }
 
-/* Styling for Font Awesome icons */
+.carousel-item:hover .icon-circle {
+    transform: rotateY(10deg) scale(1.15);
+}
+
 .carousel-item .icon-circle i {
-    font-weight: 300; /* Makes icons look thinner */
-    color: var(--text-light); /* Default color for icons */
-    transition: color 0.3s ease, transform 0.3s ease;
+    color: var(--text-light);
+    transition: color 0.4s ease, transform 0.4s ease;
 }
 
 .carousel-item:hover .icon-circle i {
-    color: var(--accent-primary); /* Change color on hover */
-    transform: scale(1.1); /* Slightly enlarge icon on hover */
+    color: var(--accent-primary);
+    transform: scale(1.1);
 }
 
-/* Specific colors for social media icons - background and border */
 .icon-circle.facebook { background-color: #3b5998; border-color: #3b5998; }
 .icon-circle.instagram { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%); border-color: #d6249f; }
 .icon-circle.youtube { background-color: #ff0000; border-color: #ff0000; }
@@ -296,9 +264,8 @@ body {
 .icon-circle.behance { background-color: #053eff; border-color: #053eff; }
 .icon-circle.dribbble { background-color: #ea4c89; border-color: #ea4c89; }
 
-
 .carousel-item p {
-    font-size: 1.4rem;
+    font-size: 1.3rem;
     font-weight: bold;
     color: var(--text-light);
     position: relative;
@@ -321,12 +288,10 @@ body {
     border-radius: 10px;
     border: 1px solid rgba(var(--accent-primary-rgb), 0.3);
     box-shadow: 0 0 15px rgba(var(--accent-primary-rgb), 0.2);
-    transition: border-color 0.5s ease, box-shadow 0.5s ease;
+    transition: border-color var(--transition-base), box-shadow var(--transition-base);
 }
 
-.bio-content p {
-    margin-bottom: 15px;
-}
+.bio-content p { margin-bottom: 15px; }
 
 .bio-actions {
     display: flex;
@@ -346,9 +311,9 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 3rem; /* Placeholder, can put an image or 3D model here */
+    font-size: 3rem;
     overflow: hidden;
-    transition: border-color 0.5s ease, box-shadow 0.5s ease;
+    transition: border-color var(--transition-base), box-shadow var(--transition-base);
 }
 
 .action-button {
@@ -365,7 +330,7 @@ body {
 }
 
 .action-button:hover {
-    background-color: var(--accent-blue); /* or a slightly lighter shade of primary */
+    background-color: var(--accent-blue);
     transform: translateY(-3px);
     box-shadow: 0 5px 20px rgba(var(--accent-primary-rgb), 0.8);
 }
@@ -374,7 +339,6 @@ body {
     margin-left: 10px;
 }
 
-
 .signature {
     text-align: center;
     margin-top: 50px;
@@ -382,7 +346,7 @@ body {
 }
 
 .signature span {
-    font-family: 'Dancing Script', cursive; /* Specific font for signature, make sure to import if needed */
+    font-family: 'Dancing Script', cursive;
     font-size: 3rem;
     color: var(--text-light);
     text-shadow: var(--neon-glow);
@@ -406,7 +370,6 @@ body {
     transition: background 0.5s ease;
 }
 
-
 /* تذييل الصفحة */
 .main-footer {
     text-align: center;
@@ -414,14 +377,14 @@ body {
     background-color: rgba(0, 0, 0, 0.3);
     margin-top: auto;
     border-top: 1px solid rgba(var(--accent-primary-rgb), 0.2);
-    transition: border-color 0.5s ease;
+    transition: border-color var(--transition-base);
 }
 
 .social-links a {
     color: var(--text-light);
     font-size: 1.5rem;
     margin: 0 10px;
-    transition: color 0.3s ease, transform 0.3s ease;
+    transition: color var(--transition-base), transform var(--transition-base);
 }
 
 .social-links a:hover {
@@ -431,7 +394,7 @@ body {
 
 /* زر العودة للأعلى */
 #backToTopBtn {
-    display: none; /* Hidden by default */
+    display: none;
     position: fixed;
     bottom: 30px;
     right: 30px;
@@ -444,7 +407,7 @@ body {
     font-size: 1.5rem;
     cursor: pointer;
     box-shadow: 0 5px 15px rgba(var(--accent-primary-rgb), 0.5);
-    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    transition: background-color var(--transition-base), transform var(--transition-base), box-shadow var(--transition-base);
     z-index: 999;
 }
 
@@ -454,7 +417,7 @@ body {
     box-shadow: 0 8px 20px rgba(var(--accent-primary-rgb), 0.7);
 }
 
-/* Scroll effects for header */
+/* تأثيرات التمرير */
 .main-header.scrolled {
     padding: 20px 20px;
     background-color: rgba(0, 0, 0, 0.7);
@@ -472,87 +435,39 @@ body {
     transform: translateY(-10px);
 }
 
-/* @container query for carousel items (responsive adjustment based on parent width) */
+/* استجابة الكاروسيل */
 @container carousel-section (min-width: 600px) {
-  .carousel-item {
-    width: 250px;
-  }
+    .carousel-item { width: 220px; }
 }
 
 @container carousel-section (min-width: 900px) {
-  .carousel-item {
-    width: 300px;
-  }
+    .carousel-item { width: 260px; }
 }
 
-
-/* Media Queries for responsiveness */
 @media (max-width: 768px) {
-    .main-header {
-        padding: 30px 15px;
-    }
-    .neon-title {
-        font-size: clamp(1.8rem, 8vw, 3.5rem);
-        letter-spacing: 4px;
-    }
-    .tagline {
-        font-size: 1.2rem;
-    }
-    .content-wrapper {
-        margin: 30px auto;
-        padding: 15px;
-    }
-    .section-title {
-        font-size: 2.2rem;
-        margin-bottom: 40px;
-    }
-    .carousel-container {
-        padding: 10px 0;
-    }
-    .carousel-item {
-        width: 180px;
-        padding: 15px;
-    }
-    .carousel-item .icon-circle {
-        width: 70px;
-        height: 70px;
-        font-size: 2rem;
-    }
-    .carousel-item p {
-        font-size: 1.1rem;
-    }
-    .bio-content {
-        font-size: 1rem;
-        padding: 20px;
-    }
-    .signature span {
-        font-size: 2.2rem;
-    }
-    .main-footer {
-        padding: 20px 10px;
-    }
-    .social-links a {
-        font-size: 1.2rem;
-        margin: 0 8px;
-    }
-    #backToTopBtn {
-        width: 40px;
-        height: 40px;
-        font-size: 1.2rem;
-        bottom: 20px;
-        right: 20px;
-    }
+    .main-header { padding: 30px 15px; }
+    .neon-title { font-size: clamp(1.8rem, 8vw, 3.5rem); letter-spacing: 4px; }
+    .tagline { font-size: 1.2rem; }
+    .content-wrapper { margin: 30px auto; padding: 15px; }
+    .section-title { font-size: 2.2rem; margin-bottom: 40px; }
+    .carousel-container { padding: 20px 0; }
+    .carousel-item { width: 160px; }
+    .carousel-item .icon-circle { width: 70px; height: 70px; font-size: 2rem; }
+    .carousel-item p { font-size: 1.1rem; }
+    .bio-content { font-size: 1rem; padding: 20px; }
+    .signature span { font-size: 2.2rem; }
+    .main-footer { padding: 20px 10px; }
+    .social-links a { font-size: 1.2rem; margin: 0 8px; }
+    #backToTopBtn { width: 40px; height: 40px; font-size: 1.2rem; bottom: 20px; right: 20px; }
 }
 
 @media (max-width: 480px) {
     .main-header { padding: 20px 10px; }
     .neon-title { font-size: 2.5rem; letter-spacing: 3px; }
     .tagline { font-size: 1rem; }
-    .section-title { font-size: 1.8rem; margin-bottom: 40px;}
-    .content-wrapper { margin-top: 100px; padding: 10px;}
-    .carousel-item { width: 150px; aspect-ratio: 1/1.5; padding: 15px; }
-    .carousel-item .icon-circle { width: 80px; height: 80px; border-width: 3px; font-size: 2rem;}
-    .carousel-item p { font-size: 1.2rem; }
-    section { padding: 20px; }
-    .bio-content { font-size: 1rem; }
-  }
+    .section-title { font-size: 1.8rem; margin-bottom: 40px; }
+    .content-wrapper { margin-top: 100px; padding: 10px; }
+    .carousel-item { width: 140px; }
+    .carousel-item .icon-circle { width: 60px; height: 60px; font-size: 1.8rem; }
+    .carousel-item p { font-size: 1rem; }
+}
