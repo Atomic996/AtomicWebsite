@@ -116,6 +116,16 @@ body {
     z-index: 1;
 }
 
+section {
+    background: rgba(10, 15, 43, 0.7);
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 0 40px rgba(0, 166, 237, 0.3);
+    border: 1px solid rgba(0, 166, 237, 0.2);
+    backdrop-filter: blur(10px);
+    margin-bottom: 60px; /* لإنشاء مسافة بين الأقسام */
+}
+
 .section-title {
     font-family: 'Orbitron', sans-serif;
     font-size: 2.8rem;
@@ -139,28 +149,29 @@ body {
 
 /* قسم الكاروسيل */
 .slider-section {
-    margin-bottom: 100px;
+    /* margin-bottom: 100px;  تم نقل هذا إلى Section العامة */
     text-align: center;
 }
 
 .carousel-container {
     width: 100%;
     height: 400px; /* ارتفاع الكاروسيل */
+    perspective: 1200px; /* لتمكين تأثير ثلاثي الأبعاد */
+    position: relative; /* لتحديد موضع الأزرار والنقاط */
     display: flex;
     justify-content: center;
     align-items: center;
-    perspective: 1200px; /* لتمكين تأثير ثلاثي الأبعاد */
-    position: relative; /* لتحديد موضع الأزرار والنقاط */
     overflow: hidden; /* لإخفاء أجزاء الكاروسيل الزائدة عن الحاوية */
+    cursor: grab; /* ليتوافق مع السحب */
 }
 
 .carousel-wrapper {
-    position: relative;
+    position: relative; /* كانت absolute */
     width: 100%;
     height: 100%;
     transform-style: preserve-3d; /* للحفاظ على الـ 3D للعناصر الداخلية */
     transform: rotateY(0deg); /* الدوران الافتراضي */
-    cursor: grab;
+    /* transition: transform 0.1s ease-out; هذا سيتم التحكم فيه بواسطة GSAP الآن */
 }
 
 .carousel-wrapper:active {
@@ -181,8 +192,9 @@ body {
     padding: 30px;
     box-shadow: 0 0 25px rgba(0, 166, 237, 0.4), 0 0 40px rgba(138, 43, 226, 0.3);
     border: 2px solid var(--accent-blue);
-    transition: all 0.3s ease;
-    opacity: 0; /* مخفي افتراضيا للرسوم المتحركة */
+    transition: all 0.3s ease; /* transition لأي تأثيرات أخرى غير التي تتحكم بها GSAP */
+    opacity: 0; /* مخفي افتراضيًا للرسوم المتحركة مع Intersection Observer */
+    /* Backface visibility و transform-origin و overflow تم نقلها من هنا إذا كانت موجودة في السابق */
 }
 
 .carousel-item::before {
@@ -297,9 +309,10 @@ body {
 
 /* قسم "من أنا" */
 .about-section {
-    padding: 60px 0;
+    position: relative;
+    /* padding: 60px 0; تم نقله إلى Section العامة */
     text-align: center;
-    margin-bottom: 100px;
+    /* margin-bottom: 100px; تم نقله إلى Section العامة */
 }
 
 .bio-content {
@@ -307,12 +320,13 @@ body {
     margin: 0 auto 40px auto;
     font-size: 1.3rem;
     line-height: 2;
-    text-align: justify;
+    text-align: justify; /* ليتوافق مع التصميم الاحترافي */
 }
 
 .bio-content p {
     margin-bottom: 20px;
-    opacity: 0; /* مخفي افتراضيا للرسوم المتحركة */
+    opacity: 0; /* مخفي افتراضيًا للرسوم المتحركة */
+    padding: 0 20px; /* لإضافة حشوة جانبية للنص */
 }
 
 .signature {
@@ -324,7 +338,7 @@ body {
 }
 
 .signature span {
-    font-family: 'Dancing Script', cursive; /* يتطلب استيراد خط 'Dancing Script' */
+    font-family: 'Cairo', sans-serif; /* استخدم Cairo أو قم باستيراد خط جديد مثل 'Dancing Script' */
     font-size: 3rem;
     color: var(--accent-purple);
     text-shadow: 0 0 10px var(--accent-purple), 0 0 20px rgba(138, 43, 226, 0.5);
@@ -346,6 +360,8 @@ body {
     text-align: center;
     margin-top: auto; /* يدفع الفوتر إلى الأسفل */
     border-top: 1px solid rgba(0, 166, 237, 0.2);
+    position: relative; /* للتأكد من z-index يعمل */
+    z-index: 10;
 }
 
 .main-footer p {
@@ -355,16 +371,18 @@ body {
 }
 
 .social-links {
+    margin-top: 15px; /* كانت 15px */
     display: flex;
     justify-content: center;
     gap: 20px;
 }
 
 .social-icon {
-    width: 50px;
-    height: 50px;
-    border: 2px solid var(--accent-blue);
+    width: 50px; /* كانت 40px */
+    height: 50px; /* كانت 40px */
+    border: 2px solid var(--accent-blue); /* إضافة حدود لتبدو أفضل */
     border-radius: 50%;
+    background: rgba(0, 166, 237, 0.2); /* كانت rgba(0, 166, 237, 0.2) */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -372,13 +390,13 @@ body {
     font-size: 1.5rem; /* تم زيادة الحجم */
     transition: all 0.3s ease;
     text-decoration: none;
-    box-shadow: 0 0 10px rgba(0, 166, 237, 0.3);
+    box-shadow: 0 0 10px rgba(0, 166, 237, 0.3); /* إضافة ظل افتراضي */
 }
 
 .social-icon:hover {
     background: var(--accent-blue);
     color: #fff;
-    transform: translateY(-5px) scale(1.1); /* تأثير أكثر بروزا */
+    transform: translateY(-5px) scale(1.1); /* رفع الزر قليلاً وتكبيره */
     box-shadow: 0 0 25px var(--accent-blue); /* توهج أكبر */
 }
 
@@ -432,13 +450,14 @@ body {
     .carousel-item { width: 180px; height: 250px; padding: 20px; }
     .carousel-item img { width: 100px; height: 100px; }
     .carousel-item p { font-size: 1.4rem; }
+    section { padding: 30px; }
     .bio-content { font-size: 1.1rem; }
     .signature span { font-size: 2.5rem; }
     .social-icon { font-size: 1.2rem; width: 45px; height: 45px; }
 
     /* Header المصغر */
     .main-header.scrolled .neon-title { font-size: 2rem; }
-    .main-header.scrolled .tagline { display: none; } /* إخفاء الشعار تماما على الجوالات */
+    .main-header.scrolled .tagline { opacity: 0; transform: translateY(-10px); } /* إخفاء الشعار تماما على الجوالات */
 
     /* أزرار التنقل */
     .carousel-nav {
@@ -459,10 +478,11 @@ body {
     .content-wrapper { margin-top: 100px; padding: 10px;}
     .carousel-container { height: 280px; }
     .carousel-item { width: 150px; height: 220px; padding: 15px; }
-    .carousel-item img { width: 80px; height: 80px; }
+    .carousel-item img { width: 80px; height: 80px; border-width: 3px; }
     .carousel-item p { font-size: 1.2rem; }
+    section { padding: 20px; }
     .bio-content { font-size: 1rem; }
-    .signature span { font-size: 2rem; }
+    .signature { font-size: 1.5rem; }
     .signature-line { width: 150px; }
     .social-icon { font-size: 1rem; width: 40px; height: 40px; }
 
