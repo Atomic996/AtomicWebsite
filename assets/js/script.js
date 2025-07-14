@@ -8,12 +8,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const carouselItems = gsap.utils.toArray('.carousel-item');
     const prevBtn = document.querySelector('.carousel-nav.prev');
     const nextBtn = document.querySelector('.carousel-nav.next');
-    const carouselDotsContainer = document.querySelector('.carousel-dots');
+    const carouselDotsContainer = document.querySelector('.carousel-dots'); // تأكد من وجود هذا العنصر في HTML
 
     // إعدادات الكاروسيل
     const numItems = carouselItems.length;
-    const radius = 850; // يمكن تعديل هذا الرقم لتغيير عمق الكاروسيل
-    const arcAngle = 120; // يمكن تعديل هذا الرقم لتغيير زاوية الكاروسيل
+    const radius = 850; // تم تعديل هذا الرقم لعمق أفضل
+    const arcAngle = 120; // تم تعديل هذا الرقم لزاوية أوسع
     const itemRotationOffset = 10;
     const maxRotationSensitivity = 40; // حساسية دوران الكاروسيل بالماوس
     let currentItemIndex = 0; // العنصر النشط حالياً
@@ -25,7 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         carouselItems.forEach((item, i) => {
             const currentAngle = startAngle + (i * angleStep);
-            const radAngle = currentAngle * (Math.PI / 180);
+            // استخدام gsap.utils.degToRad لتحويل الدرجات إلى راديان
+            const radAngle = gsap.utils.degToRad(currentAngle);
 
             gsap.set(item, {
                 x: Math.sin(radAngle) * radius,
@@ -93,10 +94,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // إنشاء نقاط التنقل
     function createCarouselDots() {
+        if (!carouselDotsContainer) return; // تأكد من وجود العنصر
         carouselDotsContainer.innerHTML = ''; // مسح أي نقاط موجودة
         for (let i = 0; i < numItems; i++) {
             const dot = document.createElement('span');
-            dot.classList.add('dot');
+            dot.classList.add('carousel-dot'); // استخدام carousel-dot بدلاً من dot
             if (i === currentItemIndex) {
                 dot.classList.add('active');
             }
@@ -107,7 +109,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // تحديث حالة النقاط
     function updateDots() {
-        document.querySelectorAll('.carousel-dots .dot').forEach((dot, i) => {
+        if (!carouselDotsContainer) return; // تأكد من وجود العنصر
+        document.querySelectorAll('.carousel-dots .carousel-dot').forEach((dot, i) => {
             if (i === currentItemIndex) {
                 dot.classList.add('active');
             } else {
@@ -154,9 +157,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // أحداث النقر على أزرار التنقل
-    prevBtn.addEventListener('click', () => goToItem(currentItemIndex - 1));
-    nextBtn.addEventListener('click', () => goToItem(currentItemIndex + 1));
+    // أحداث النقر على أزرار التنقل (يجب إضافة الأزرار في HTML)
+    if (prevBtn) prevBtn.addEventListener('click', () => goToItem(currentItemIndex - 1));
+    if (nextBtn) nextBtn.addEventListener('click', () => goToItem(currentItemIndex + 1));
 
     // تحديث سنة حقوق الطبع والنشر في الفوتر
     document.getElementById('currentYear').textContent = new Date().getFullYear();
@@ -164,20 +167,23 @@ document.addEventListener('DOMContentLoaded', () => {
     // وظيفة زر العودة للأعلى
     const backToTopBtn = document.getElementById('backToTopBtn');
 
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 300) { // أظهر الزر بعد التمرير 300 بكسل
-            backToTopBtn.style.display = 'block';
-        } else {
-            backToTopBtn.style.display = 'none';
-        }
-    });
-
-    backToTopBtn.addEventListener('click', () => {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth' // للتمرير الناعم
+    if (backToTopBtn) {
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) { // أظهر الزر بعد التمرير 300 بكسل
+                backToTopBtn.style.display = 'block';
+            } else {
+                backToTopBtn.style.display = 'none';
+            }
         });
-    });
+
+        backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth' // للتمرير الناعم
+            });
+        });
+    }
+
 
     // تأثيرات الرسوم المتحركة الأولية
     gsap.from('.carousel-item', {
