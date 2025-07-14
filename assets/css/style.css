@@ -316,6 +316,19 @@ body {
     z-index: 1;
 }
 
+/* الأنماط المضافة للأيقونات الخطية وتأثير التفاعل */
+.carousel-item .icon-circle i {
+    font-weight: 300; /* لجعل الخطوط تبدو أرق */
+    transition: color 0.3s ease, transform 0.3s ease; /* إضافة انتقال سلس للتفاعل */
+}
+
+.carousel-item:hover .icon-circle i {
+    color: var(--accent-primary); /* تغيير اللون عند التمرير */
+    transform: scale(1.1); /* تكبير الأيقونة قليلاً عند التمرير */
+}
+/* نهاية الأنماط المضافة */
+
+
 /* ألوان أيقونات التواصل الاجتماعي */
 .icon-circle.facebook { background-color: #3b5998; border-color: #3b5998; }
 .icon-circle.instagram { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%); border-color: #d6249f; }
@@ -628,4 +641,4 @@ body {
 :root {
   --accent-blue-rgb: 0, 166, 237;
   --accent-purple-rgb: 138, 43, 226;
-    }
+  }
