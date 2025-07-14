@@ -133,28 +133,28 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     setupTextToSpeech();
 
-    // الكاروسيل القوسي ثلاثي الأبعاد
+    // الكاروسيل الدائري ثلاثي الأبعاد
     const setupArcCarousel = () => {
         if (!elements.carouselWrapper) return;
 
         const items = elements.carouselWrapper.querySelectorAll('.carousel-item');
         const totalItems = items.length;
-        const radius = 500;
-        const angleIncrement = (Math.PI / 2) / (totalItems - 1);
+        const radius = 400; // نصف قطر أصغر لتناسب 4 أيقونات
+        const angleIncrement = (2 * Math.PI) / totalItems; // 360 درجة مقسمة على 4
 
         const positionItems = () => {
             items.forEach((item, index) => {
-                const angle = -Math.PI / 4 + index * angleIncrement;
+                const angle = index * angleIncrement; // تبدأ من 0 إلى 2π
                 const x = radius * Math.sin(angle);
                 const z = radius * (1 - Math.cos(angle));
-                item.style.transform = `translateX(${x}px) translateZ(${z}px) rotateY(${-angle * (180 / Math.PI)}deg)`;
+                item.style.transform = `translateX(${x}px) translateZ(${z}px) rotateY(${angle * (180 / Math.PI)}deg)`;
             });
         };
         positionItems();
 
         let isDragging = false;
         let startX, startRotation = 0;
-        const maxRotation = 30;
+        const maxRotation = 45; // زيادة الحد الأقصى للدوران لتتناسب مع الدائرة
 
         const updateRotation = (clientX) => {
             const rect = elements.carouselWrapper.getBoundingClientRect();
@@ -204,10 +204,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 item.style.transition = 'transform 0.4s ease, box-shadow 0.4s ease';
             });
             item.addEventListener('mouseleave', () => {
-                const angle = -Math.PI / 4 + item.dataset.index * angleIncrement;
+                const angle = item.dataset.index * angleIncrement;
                 const x = radius * Math.sin(angle);
                 const z = radius * (1 - Math.cos(angle));
-                item.style.transform = `translateX(${x}px) translateZ(${z}px) rotateY(${-angle * (180 / Math.PI)}deg)`;
+                item.style.transform = `translateX(${x}px) translateZ(${z}px) rotateY(${angle * (180 / Math.PI)}deg)`;
             });
         });
 
