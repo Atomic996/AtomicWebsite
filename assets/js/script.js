@@ -1,4 +1,3 @@
-// ملف: assets/js/script.js
 document.addEventListener('DOMContentLoaded', () => {
     // العناصر الأساسية
     const elements = {
@@ -7,8 +6,6 @@ document.addEventListener('DOMContentLoaded', () => {
         bioTextElement: document.getElementById('bio-text'),
         backToTopBtn: document.getElementById('backToTopBtn'),
         mainHeader: document.querySelector('.main-header'),
-        skeletonLoader: document.getElementById('skeleton-loader'),
-        mainContent: document.getElementById('main-content'),
         currentYearSpan: document.getElementById('currentYear'),
         threejsBackground: document.getElementById('threejs-background'),
     };
@@ -17,108 +14,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (elements.currentYearSpan) {
         elements.currentYearSpan.textContent = new Date().getFullYear();
     }
-
-    // إخفاء Skeleton Loader وإظهار المحتوى
-    const showContent = () => {
-        if (elements.skeletonLoader && elements.mainContent) {
-            elements.skeletonLoader.classList.add('hidden');
-            elements.mainContent.style.display = 'block';
-        }
-    };
-    setTimeout(showContent, 1500);
-
-    // وظيفة تبديل الثيم
-    const updateTheme = (isManual = false, theme = null) => {
-        const hour = new Date().getHours();
-        let accentPrimary, accentPrimaryRgb;
-
-        if (isManual && theme) {
-            accentPrimary = theme === 'light' ? '#00A6ED' : '#8A2BE2';
-            accentPrimaryRgb = theme === 'light' ? '0, 166, 237' : '138, 43, 226';
-            document.documentElement.setAttribute('data-theme', theme);
-        } else {
-            accentPrimary = hour >= 6 && hour < 18 ? '#00A6ED' : '#8A2BE2';
-            accentPrimaryRgb = hour >= 6 && hour < 18 ? '0, 166, 237' : '138, 43, 226';
-            document.documentElement.setAttribute('data-theme', hour >= 6 && hour < 18 ? 'light' : 'dark');
-        }
-
-        document.documentElement.style.setProperty('--accent-primary', accentPrimary);
-        document.documentElement.style.setProperty('--accent-primary-rgb', accentPrimaryRgb);
-        document.documentElement.style.setProperty('--neon-glow', `0 0 10px ${accentPrimary}, 0 0 20px ${accentPrimary}`);
-        document.documentElement.style.setProperty('--deep-glow', `0 0 15px ${accentPrimary}, 0 0 30px ${accentPrimary}`);
-
-        if (window.updateParticleColor) {
-            window.updateParticleColor();
-        }
-    };
-    updateTheme();
-    setInterval(updateTheme, 60 * 1000);
-
-    // زر تبديل الثيم
-    const toggleThemeButton = document.createElement('button');
-    toggleThemeButton.textContent = 'تبديل الثيم';
-    toggleThemeButton.className = 'action-button theme-toggle';
-    toggleThemeButton.setAttribute('aria-label', 'تبديل بين الثيم الفاتح والداكن');
-    document.querySelector('.bio-actions').appendChild(toggleThemeButton);
-
-    toggleThemeButton.addEventListener('click', () => {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        updateTheme(true, currentTheme === 'light' ? 'dark' : 'light');
-    });
-
-    // تحويل النص إلى كلام
-    const setupTextToSpeech = () => {
-        if (!elements.playBioButton || !elements.bioTextElement) return;
-
-        const bioText = elements.bioTextElement.textContent;
-        const speechSynth = window.speechSynthesis;
-        let currentUtterance = null;
-        let isSpeaking = false;
-
-        if (!speechSynth) {
-            elements.playBioButton.textContent = 'متصفحك لا يدعم القراءة الصوتية';
-            elements.playBioButton.disabled = true;
-            elements.playBioButton.classList.add('disabled');
-            return;
-        }
-
-        elements.playBioButton.addEventListener('click', () => {
-            if (!isSpeaking) {
-                currentUtterance = new SpeechSynthesisUtterance(bioText);
-                currentUtterance.lang = 'ar-SA';
-                currentUtterance.pitch = 1;
-                currentUtterance.rate = 1;
-
-                currentUtterance.onstart = () => {
-                    isSpeaking = true;
-                    elements.playBioButton.innerHTML = 'إيقاف السيرة الذاتية <i class="fas fa-pause"></i>';
-                    elements.playBioButton.classList.add('playing');
-                };
-
-                currentUtterance.onend = () => {
-                    isSpeaking = false;
-                    elements.playBioButton.innerHTML = 'استمع إلى السيرة الذاتية <i class="fas fa-volume-up"></i>';
-                    elements.playBioButton.classList.remove('playing');
-                };
-
-                currentUtterance.onerror = (event) => {
-                    console.error('Speech synthesis error:', event.error);
-                    isSpeaking = false;
-                    elements.playBioButton.innerHTML = 'استمع إلى السيرة الذاتية <i class="fas fa-volume-up"></i>';
-                    elements.playBioButton.classList.remove('playing');
-                    alert('حدث خطأ أثناء تشغيل السيرة الذاتية.');
-                };
-
-                speechSynth.speak(currentUtterance);
-            } else {
-                speechSynth.cancel();
-                isSpeaking = false;
-                elements.playBioButton.innerHTML = 'استمع إلى السيرة الذاتية <i class="fas fa-volume-up"></i>';
-                elements.playBioButton.classList.remove('playing');
-            }
-        });
-    };
-    setupTextToSpeech();
 
     // زر العودة للأعلى
     const setupBackToTop = () => {
@@ -137,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // خلفية الجسيمات باستخدام Three.js
     const setupThreeJS = () => {
-        if (!elements.threejsBackground || typeof THREE Certaines === 'undefined') return;
+        if (!elements.threejsBackground || typeof THREE === 'undefined') return;
 
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -195,6 +90,48 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
     setupThreeJS();
+
+    // تحويل النص إلى كلام
+    const setupTextToSpeech = () => {
+        if (!elements.playBioButton || !elements.bioTextElement) return;
+
+        const bioText = elements.bioTextElement.textContent;
+        const speechSynth = window.speechSynthesis;
+        let currentUtterance = null;
+        let isSpeaking = false;
+
+        if (!speechSynth) {
+            elements.playBioButton.textContent = 'متصفحك لا يدعم القراءة الصوتية';
+            elements.playBioButton.disabled = true;
+            return;
+        }
+
+        elements.playBioButton.addEventListener('click', () => {
+            if (!isSpeaking) {
+                currentUtterance = new SpeechSynthesisUtterance(bioText);
+                currentUtterance.lang = 'ar-SA';
+                currentUtterance.pitch = 1;
+                currentUtterance.rate = 1;
+
+                currentUtterance.onstart = () => {
+                    isSpeaking = true;
+                    elements.playBioButton.innerHTML = 'إيقاف السيرة الذاتية <i class="fas fa-pause"></i>';
+                };
+
+                currentUtterance.onend = () => {
+                    isSpeaking = false;
+                    elements.playBioButton.innerHTML = 'استمع إلى السيرة الذاتية <i class="fas fa-volume-up"></i>';
+                };
+
+                speechSynth.speak(currentUtterance);
+            } else {
+                speechSynth.cancel();
+                isSpeaking = false;
+                elements.playBioButton.innerHTML = 'استمع إلى السيرة الذاتية <i class="fas fa-volume-up"></i>';
+            }
+        });
+    };
+    setupTextToSpeech();
 
     // الكاروسيل القوسي ثلاثي الأبعاد
     const setupArcCarousel = () => {
