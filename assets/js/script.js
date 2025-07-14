@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         carouselItems.forEach((item, i) => {
             const currentAngle = startAngle + (i * angleStep);
-            const radAngle = gsap.utils.degToRad(currentAngle);
+            const radAngle = currentAngle * (Math.PI / 180);
 
             gsap.set(item, {
                 x: Math.sin(radAngle) * radius,
