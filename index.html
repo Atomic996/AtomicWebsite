@@ -5,75 +5,97 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Atomic - التجربة الذكية</title>
     <link rel="stylesheet" href="assets/css/style.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/MotionPathPlugin.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="icon" type="image/png" href="assets/images/favicon.png"> </head>
+    <link rel="icon" type="image/png" href="assets/images/favicon.png">
+    <script async src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.165.0/three.min.js"></script>
+</head>
 <body>
-    <div class="particles-background"></div>
-    
-    <header class="main-header">
-        <h1 class="neon-title">Atomic</h1>
-        <p class="tagline">بوابتك إلى العالم الرقمي الغامر</p>
-    </header>
-
-    <main class="content-wrapper">
-        <section class="slider-section">
-            <h2 class="section-title neon-text">تواصل معي</h2>
-            <div class="carousel-container">
-                <div class="carousel-wrapper">
-                    <a href="https://www.facebook.com/hicham.chamadi" target="_blank" class="carousel-item">
-                        <img src="assets/images/facebook.png" alt="Facebook">
-                        <p>فيسبوك</p>
-                    </a>
-                    <a href="https://www.instagram.com/atomic_ch6?igsh=MWVjdnRkdGhxamhwNg==" target="_blank" class="carousel-item">
-                        <img src="assets/images/instagram.png" alt="Instagram">
-                        <p>انستغرام</p>
-                    </a>
-                    <a href="https://x.com/Atomic996?t=5sFG7w2fwcvyM4sZ3z-DPg&s=09" target="_blank" class="carousel-item">
-                        <img src="assets/images/twitter.png" alt="X (Twitter)">
-                        <p>تويتر (X)</p>
-                    </a>
-                    <a href="https://t.me/ATOMIC994" target="_blank" class="carousel-item">
-                        <img src="assets/images/telegram.png" alt="Telegram">
-                        <p>تيليجرام</p>
-                    </a>
-                </div>
-                <button class="carousel-nav prev"><i class="fas fa-chevron-left"></i></button>
-                <button class="carousel-nav next"><i class="fas fa-chevron-right"></i></button>
-                <div class="carousel-dots"></div>
-            </div>
-        </section>
-
-        <section class="about-section">
-            <h2 class="section-title neon-text">من أنا؟</h2>
-            <div class="bio-content">
-                <p>مرحباً بك في عالمي الرقمي! أنا Atomic، مصمم تجارب تفاعلية.</p>
-                <p>أخصص وقتي لإنشاء محتوى إبداعي في مجال التكنولوجيا والتصميم.</p>
-                <p>أستمتع باستكشاف كل ما هو جديد في التكنولوجيا والتصميم، وأسعى دائمًا لتقديم محتوى فريد ومُلهم.</p>
-                <p>لا تتردد في التواصل معي ومتابعة رحلتي!</p>
-            </div>
-            <div class="signature">
-                <span>Atomic</span>
-                <div class="signature-line"></div>
-            </div>
-        </section>
-    </main>
-
-    <footer class="main-footer">
-        <p>&copy; <span id="currentYear"></span> Atomic. جميع الحقوق محفوظة.</p>
-        <div class="social-links">
-            <a href="#" class="social-icon"><i class="fab fa-whatsapp"></i></a>
-            <a href="#" class="social-icon"><i class="fab fa-linkedin"></i></a>
-            <a href="#" class="social-icon"><i class="fab fa-github"></i></a>
-            <a href="#" class="social-icon"><i class="fab fa-envelope"></i></a>
+    <div id="skeleton-loader" class="skeleton-loader">
+        <div class="skeleton-header"></div>
+        <div class="skeleton-carousel">
+            <div class="skeleton-item"></div>
+            <div class="skeleton-item"></div>
+            <div class="skeleton-item"></div>
         </div>
-    </footer>
+        <div class="skeleton-bio">
+            <div class="skeleton-line short"></div>
+            <div class="skeleton-line long"></div>
+            <div class="skeleton-line medium"></div>
+        </div>
+    </div>
 
-    <button id="backToTopBtn" title="العودة للأعلى">
-        <i class="fas fa-arrow-up"></i>
-    </button>
+    <div id="threejs-background" class="threejs-background"></div>
 
-    <script src="assets/js/script.js"></script>
+    <div id="main-content" style="display: none;"> <header class="main-header">
+            <h1 class="neon-title">Atomic</h1>
+            <p class="tagline">بوابتك إلى العالم الرقمي الغامر</p>
+        </header>
+
+        <main class="content-wrapper">
+            <section class="slider-section">
+                <h2 class="section-title neon-text">تواصل معي</h2>
+                <div class="carousel-container">
+                    <div class="carousel-wrapper">
+                        <a href="https://www.facebook.com/hicham.chamadi" target="_blank" class="carousel-item">
+                            <div class="icon-circle facebook"><i class="fab fa-facebook-f"></i></div>
+                            <p>فيسبوك</p>
+                        </a>
+                        <a href="https://www.instagram.com/hicham_chamadi/" target="_blank" class="carousel-item">
+                            <div class="icon-circle instagram"><i class="fab fa-instagram"></i></div>
+                            <p>انستغرام</p>
+                        </a>
+                        <a href="https://www.youtube.com/@hichamchamadi3850" target="_blank" class="carousel-item">
+                            <div class="icon-circle youtube"><i class="fab fa-youtube"></i></div>
+                            <p>يوتيوب</p>
+                        </a>
+                        <a href="https://www.tiktok.com/@hichamchamadi" target="_blank" class="carousel-item">
+                            <div class="icon-circle tiktok"><i class="fab fa-tiktok"></i></div>
+                            <p>تيك توك</p>
+                        </a>
+                        <a href="https://www.behance.net/hichamchamadi" target="_blank" class="carousel-item">
+                            <div class="icon-circle behance"><i class="fab fa-behance"></i></div>
+                            <p>بيهانس</p>
+                        </a>
+                        <a href="https://dribbble.com/Atomic_design" target="_blank" class="carousel-item">
+                            <div class="icon-circle dribbble"><i class="fab fa-dribbble"></i></div>
+                            <p>دريببل</p>
+                        </a>
+                    </div>
+                    </div>
+            </section>
+
+            <section class="about-section" id="about">
+                <h2 class="section-title neon-text">من أنا؟</h2>
+                <div class="bio-content">
+                    <p id="bio-text">مرحباً بك في عالمي الرقمي! أنا Atomic، مصمم تجارب تفاعلية.</p>
+                    <p>أخصص وقتي لإنشاء محتوى إبداعي في مجال التكنولوجيا والتصميم.</p>
+                    <p>أستمتع باستكشاف كل ما هو جديد في التكنولوجيا والتصميم، وأسعى دائمًا لتقديم محتوى فريد ومُلهم.</p>
+                    <p>لا تتردد في التواصل معي ومتابعة رحلتي!</p>
+                </div>
+                <div class="bio-actions">
+                    <div class="bio-avatar" id="3d-avatar"></div>
+                    <button id="play-bio" class="action-button">استمع إلى السيرة الذاتية <i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="signature">
+                    <span>Atomic</span>
+                    <div class="signature-line"></div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="main-footer">
+            <p>&copy; <span id="currentYear"></span> Atomic. جميع الحقوق محفوظة.</p>
+            <div class="social-links">
+                <a href="#" class="social-icon"><i class="fab fa-whatsapp"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-linkedin"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-github"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-envelope"></i></a>
+            </div>
+        </footer>
+
+        <button id="backToTopBtn" title="العودة للأعلى">
+            <i class="fas fa-arrow-up"></i>
+        </button>
+    </div> <script src="assets/js/script.js"></script>
 </body>
-                            </html>
+    </html>
