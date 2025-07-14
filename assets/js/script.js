@@ -133,24 +133,45 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     setupTextToSpeech();
 
-    // الكاروسيل الدائري ثلاثي الأبعاد
+    // الكاروسيل الدائري ثلاثي الأبعاد مع تبديل الأيقونات
     const setupArcCarousel = () => {
         if (!elements.carouselWrapper) return;
 
         const items = elements.carouselWrapper.querySelectorAll('.carousel-item');
         const totalItems = items.length;
-        const radius = 200; // تقليل النصف قطر لتجنب التداخل
-        const angleIncrement = (2 * Math.PI) / totalItems; // 360 درجة مقسمة بالتساوي
+        const radius = 350;
+        const angleIncrement = (2 * Math.PI) / totalItems;
+        let currentIndex = 0;
+        let autoRotateInterval;
 
         const positionItems = () => {
             items.forEach((item, index) => {
-                const angle = index * angleIncrement; // توزيع متساوٍ
+                const angle = index * angleIncrement;
                 const x = radius * Math.sin(angle);
-                const z = radius * Math.cos(angle); // استخدام cos لتجنب التشوه
+                const z = radius * Math.cos(angle);
                 item.style.transform = `translateX(${x}px) translateZ(${z}px) rotateY(${angle * (180 / Math.PI)}deg)`;
+                item.style.opacity = index === currentIndex ? '1' : '0.3'; // تقليل الشفافية للأيقونات غير النشطة
+                item.style.transition = 'opacity 0.5s ease';
             });
         };
+
+        const rotateToIndex = (index) => {
+            currentIndex = (index + totalItems) % totalItems; // التأكد من البقاء في النطاق
+            positionItems();
+        };
+
+        const startAutoRotate = () => {
+            autoRotateInterval = setInterval(() => {
+                rotateToIndex(currentIndex + 1);
+            }, 3000); // تبديل كل 3 ثوانٍ
+        };
+
+        const stopAutoRotate = () => {
+            clearInterval(autoRotateInterval);
+        };
+
         positionItems();
+        startAutoRotate();
 
         let isDragging = false;
         let startX, startRotation = 0;
@@ -160,7 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const rect = elements.carouselWrapper.getBoundingClientRect();
             const centerX = rect.left + rect.width / 2;
             const offsetX = (clientX - centerX) / rect.width;
-            const rotation = offsetX * maxRotation; // عكس الاتجاه لتحسين التجربة
+            const rotation = offsetX * maxRotation;
             elements.carouselWrapper.style.transform = `rotateY(${rotation}deg)`;
         };
 
@@ -169,6 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
             isDragging = true;
             startX = e.clientX;
             startRotation = parseFloat(getComputedStyle(elements.carouselWrapper).transform.split(',')[5]) || 0;
+            stopAutoRotate(); // إيقاف التبديل التلقائي أثناء السحب
             elements.carouselWrapper.classList.add('active');
         });
 
@@ -180,42 +202,48 @@ document.addEventListener('DOMContentLoaded', () => {
         document.addEventListener('mouseup', () => {
             isDragging = false;
             elements.carouselWrapper.classList.remove('active');
+            startAutoRotate(); // إعادة تشغيل التبديل التلقائي
         });
 
-        // أحداث اللمس (تحسين الاستجابة)
+        // أحداث اللمس
         elements.carouselWrapper.addEventListener('touchstart', (e) => {
             isDragging = true;
             startX = e.touches[0].clientX;
             startRotation = parseFloat(getComputedStyle(elements.carouselWrapper).transform.split(',')[5]) || 0;
-            e.preventDefault(); // منع السلوك الافتراضي
+            e.preventDefault();
+            stopAutoRotate(); // إيقاف التبديل التلقائي أثناء اللمس
             elements.carouselWrapper.classList.add('active');
         }, { passive: false });
 
         elements.carouselWrapper.addEventListener('touchmove', (e) => {
             if (!isDragging) return;
-            e.preventDefault(); // منع التمرير الافتراضي
+            e.preventDefault();
             updateRotation(e.touches[0].clientX);
         }, { passive: false });
 
         elements.carouselWrapper.addEventListener('touchend', () => {
             isDragging = false;
             elements.carouselWrapper.classList.remove('active');
+            startAutoRotate(); // إعادة تشغيل التبديل التلقائي
         });
 
-        // تحسين التفاعل عند التحويم
+        // تحسين التفاعل عند التحويم/اللمس
         items.forEach((item) => {
             item.addEventListener('mouseenter', () => {
                 item.style.transition = 'transform 0.4s ease, box-shadow 0.4s ease';
+                stopAutoRotate(); // إيقاف عند التحويم
             });
             item.addEventListener('mouseleave', () => {
                 const angle = parseInt(item.dataset.index) * angleIncrement;
                 const x = radius * Math.sin(angle);
                 const z = radius * Math.cos(angle);
                 item.style.transform = `translateX(${x}px) translateZ(${z}px) rotateY(${angle * (180 / Math.PI)}deg)`;
+                startAutoRotate(); // إعادة التشغيل عند الخروج
             });
             item.addEventListener('touchstart', () => {
                 item.style.transform = 'scale(1.1) translateZ(50px)';
                 item.style.zIndex = '10';
+                stopAutoRotate();
             });
             item.addEventListener('touchend', () => {
                 const angle = parseInt(item.dataset.index) * angleIncrement;
@@ -223,6 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const z = radius * Math.cos(angle);
                 item.style.transform = `translateX(${x}px) translateZ(${z}px) rotateY(${angle * (180 / Math.PI)}deg)`;
                 item.style.zIndex = '1';
+                startAutoRotate();
             });
         });
 
