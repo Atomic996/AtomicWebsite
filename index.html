@@ -3,35 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Atomic - الملف الشخصي التفاعلي</title>
+    <title>Atomic - التجربة الذكية</title>
     <link rel="stylesheet" href="assets/css/style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/MotionPathPlugin.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
+    <div class="particles-background"></div>
+    
     <header class="main-header">
-        <h1 class="neon-text">Atomic</h1>
-        <p class="tagline">بوابتك إلى عالمي الرقمي</p>
+        <h1 class="neon-title">Atomic</h1>
+        <p class="tagline">بوابتك إلى العالم الرقمي الغامر</p>
     </header>
 
     <main class="content-wrapper">
         <section class="slider-section">
-            <h2 class="neon-text">تواصل معي</h2>
-            <div class="carousel-container" id="interactiveCarousel">
+            <h2 class="section-title neon-text">تواصل معي</h2>
+            <div class="carousel-container">
                 <div class="carousel-wrapper">
-                    <a href="#" class="carousel-item" data-social="facebook">
+                    <a href="https://www.facebook.com/hicham.chamadi" target="_blank" class="carousel-item">
                         <img src="assets/images/facebook.png" alt="Facebook">
                         <p>فيسبوك</p>
                     </a>
-                    <a href="#" class="carousel-item" data-social="instagram">
+                    <a href="https://www.instagram.com/atomic_ch6?igsh=MWVjdnRkdGhxamhwNg==" target="_blank" class="carousel-item">
                         <img src="assets/images/instagram.png" alt="Instagram">
                         <p>انستغرام</p>
                     </a>
-                    <a href="#" class="carousel-item" data-social="twitter">
+                    <a href="https://x.com/Atomic996?t=5sFG7w2fwcvyM4sZ3z-DPg&s=09" target="_blank" class="carousel-item">
                         <img src="assets/images/twitter.png" alt="X (Twitter)">
                         <p>تويتر (X)</p>
                     </a>
-                    <a href="#" class="carousel-item" data-social="telegram">
+                    <a href="https://t.me/ATOMIC994" target="_blank" class="carousel-item">
                         <img src="assets/images/telegram.png" alt="Telegram">
                         <p>تيليجرام</p>
                     </a>
@@ -40,22 +43,29 @@
         </section>
 
         <section class="about-section">
-            <h2 class="neon-text">من أنا؟</h2>
+            <h2 class="section-title neon-text">من أنا؟</h2>
             <div class="bio-content">
                 <p>مرحباً بك في عالمي الرقمي! أنا Atomic، مصمم تجارب تفاعلية.</p>
                 <p>أخصص وقتي لإنشاء محتوى إبداعي في مجال التكنولوجيا والتصميم.</p>
+                <p>أستمتع باستكشاف كل ما هو جديد في التكنولوجيا والتصميم، وأسعى دائمًا لتقديم محتوى فريد ومُلهم.</p>
+                <p>لا تتردد في التواصل معي ومتابعة رحلتي!</p>
             </div>
-            <button class="neon-button" id="voiceControlBtn">
-                <i class="fas fa-microphone"></i> التحكم الصوتي
-            </button>
+            <div class="signature">
+                <span>Atomic</span>
+                <div class="signature-line"></div>
+            </div>
         </section>
     </main>
 
     <footer class="main-footer">
         <p>&copy; <span id="currentYear"></span> Atomic. جميع الحقوق محفوظة.</p>
+        <div class="social-links">
+            <a href="#" class="social-icon"><i class="fab fa-whatsapp"></i></a>
+            <a href="#" class="social-icon"><i class="fab fa-linkedin"></i></a>
+            <a href="#" class="social-icon"><i class="fab fa-github"></i></a>
+        </div>
     </footer>
 
     <script src="assets/js/script.js"></script>
-    <script src="assets/js/voice-control.js"></script>
 </body>
-</html>
+    </html>
