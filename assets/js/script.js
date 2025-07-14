@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const items = elements.carouselWrapper.querySelectorAll('.carousel-item');
         const totalItems = items.length;
-        const radius = 350;
+        const radius = 200;
         const angleIncrement = (2 * Math.PI) / totalItems;
         let currentIndex = 0;
         let autoRotateInterval;
@@ -163,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const startAutoRotate = () => {
             autoRotateInterval = setInterval(() => {
                 rotateToIndex(currentIndex + 1);
-            }, 3000); // تبديل كل 3 ثوانٍ
+            },  2000); // تبديل كل 3 ثوانٍ
         };
 
         const stopAutoRotate = () => {
